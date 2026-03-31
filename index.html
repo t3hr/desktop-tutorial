@@ -9,449 +9,264 @@
 <body>
 
   <!-- Navigation -->
-  <nav class="nav" id="nav">
-    <a href="#" class="nav-logo">MH</a>
+  <nav class="nav">
+    <a href="#" class="nav-logo">MH.</a>
     <ul class="nav-links">
-      <li><a href="#about">Über mich</a></li>
-      <li><a href="#work">Arbeiten</a></li>
+      <li><a href="#about">Mia Hoffmann</a></li>
+      <li><a href="#work">Projekte</a></li>
       <li><a href="#services">Leistungen</a></li>
       <li><a href="#contact">Kontakt</a></li>
     </ul>
-    <button class="nav-toggle" id="navToggle" aria-label="Menü öffnen">
-      <span></span><span></span><span></span>
+    <button class="nav-toggle" id="navToggle" aria-label="Menü">
+      <span></span><span></span>
     </button>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-content">
-      <p class="hero-sub">Grafik Designerin &amp; Brand Strategin</p>
-      <h1 class="hero-title">Mia<br>Hoffmann</h1>
-      <p class="hero-desc">Ich gestalte Markenidentitäten, die bleiben. Von Konzept bis Umsetzung — mit Liebe zum Detail und einem Auge fürs Wesentliche.</p>
-      <div class="hero-actions">
-        <a href="#work" class="btn btn-primary">Projekte ansehen</a>
-        <a href="#contact" class="btn btn-secondary">Kontakt aufnehmen</a>
-      </div>
+    <div class="hero-left">
+      <h1 class="hero-title">Mia<br>Hoffmann.</h1>
+      <p class="hero-sub">Grafik Designerin<br>Brand Strategin</p>
+      <p class="hero-location">Berlin</p>
     </div>
-    <div class="hero-visual">
-      <div class="hero-shape hero-shape--1"></div>
-      <div class="hero-shape hero-shape--2"></div>
-      <div class="hero-shape hero-shape--3"></div>
+    <div class="hero-right">
+      <div class="hero-visual">
+        <div class="hero-shape-big"></div>
+        <div class="hero-shape-small"></div>
+      </div>
     </div>
   </section>
 
-  <!-- Marquee -->
-  <div class="marquee-wrapper">
-    <div class="marquee">
-      <span>Branding</span><span class="dot">·</span>
-      <span>Logo Design</span><span class="dot">·</span>
-      <span>Editorial</span><span class="dot">·</span>
-      <span>Typografie</span><span class="dot">·</span>
-      <span>Packaging</span><span class="dot">·</span>
-      <span>Web Design</span><span class="dot">·</span>
-      <span>Illustration</span><span class="dot">·</span>
-      <span>Motion Graphics</span><span class="dot">·</span>
-      <span>Branding</span><span class="dot">·</span>
-      <span>Logo Design</span><span class="dot">·</span>
-      <span>Editorial</span><span class="dot">·</span>
-      <span>Typografie</span><span class="dot">·</span>
-      <span>Packaging</span><span class="dot">·</span>
-      <span>Web Design</span><span class="dot">·</span>
-      <span>Illustration</span><span class="dot">·</span>
-      <span>Motion Graphics</span><span class="dot">·</span>
-    </div>
-  </div>
-
-  <!-- About -->
-  <section class="about section" id="about">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-image">
-          <div class="about-img-placeholder">
-            <div class="about-img-inner">
-              <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="80" r="40" fill="var(--accent)"/>
-                <ellipse cx="100" cy="170" rx="60" ry="40" fill="var(--accent)"/>
-              </svg>
-            </div>
-          </div>
-          <div class="about-stats">
-            <div class="stat">
-              <span class="stat-num">8+</span>
-              <span class="stat-label">Jahre Erfahrung</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">120+</span>
-              <span class="stat-label">Projekte</span>
-            </div>
-            <div class="stat">
-              <span class="stat-num">60+</span>
-              <span class="stat-label">Kunden</span>
-            </div>
-          </div>
-        </div>
-        <div class="about-text">
-          <span class="section-label">Über mich</span>
-          <h2 class="section-title">Design, das Geschichten erzählt</h2>
-          <p>Ich bin Mia Hoffmann, Grafik Designerin aus Berlin. Seit über 8 Jahren helfe ich Unternehmen und Einzelpersonen dabei, ihre visuelle Identität zu entwickeln und zu stärken.</p>
-          <p>Mein Ansatz verbindet strategisches Denken mit handwerklichem Können. Jedes Projekt beginnt mit einer gründlichen Analyse — wer sind Sie, wer sind Ihre Kunden und was wollen Sie kommunizieren?</p>
-          <div class="skills">
-            <span class="skill-tag">Adobe Creative Suite</span>
-            <span class="skill-tag">Figma</span>
-            <span class="skill-tag">Brand Identity</span>
-            <span class="skill-tag">Typography</span>
-            <span class="skill-tag">Illustration</span>
-            <span class="skill-tag">Print Design</span>
-            <span class="skill-tag">Web Design</span>
-            <span class="skill-tag">Motion</span>
-          </div>
-          <a href="#contact" class="btn btn-primary">Zusammenarbeiten</a>
-        </div>
-      </div>
+  <!-- Intro text -->
+  <section class="intro">
+    <div class="intro-inner">
+      <p>Ich gestalte Markenidentitäten, die bleiben. Von Konzept bis Umsetzung — mit Liebe zum Detail und einem Auge fürs Wesentliche. Seit über 8 Jahren helfe ich Unternehmen dabei, ihre visuelle Identität zu entwickeln.</p>
     </div>
   </section>
 
   <!-- Work -->
-  <section class="work section" id="work">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Ausgewählte Projekte</span>
-        <h2 class="section-title">Meine Arbeiten</h2>
-      </div>
+  <section class="work" id="work">
+    <div class="work-inner">
 
-      <div class="work-filters">
-        <button class="filter-btn active" data-filter="all">Alle</button>
-        <button class="filter-btn" data-filter="branding">Branding</button>
-        <button class="filter-btn" data-filter="print">Print</button>
-        <button class="filter-btn" data-filter="digital">Digital</button>
-        <button class="filter-btn" data-filter="illustration">Illustration</button>
-      </div>
-
-      <div class="work-grid">
-        <article class="work-card work-card--large" data-category="branding">
-          <div class="work-card-img" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
-            <div class="work-card-overlay">
-              <span class="work-card-tag">Branding</span>
-            </div>
-            <div class="work-card-mockup work-card-mockup--logo">
-              <div class="mock-logo">
-                <div class="mock-logo-icon"></div>
-                <div class="mock-logo-text">
-                  <div class="mock-bar mock-bar--lg"></div>
-                  <div class="mock-bar mock-bar--sm"></div>
+      <div class="work-row">
+        <div class="work-item work-item--large">
+          <div class="work-img work-img--dark">
+            <div class="mock-center">
+              <div class="mock-logo-big">
+                <div class="mock-icon-rect"></div>
+                <div class="mock-lines">
+                  <div class="mock-line mock-line--lg"></div>
+                  <div class="mock-line mock-line--sm"></div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="work-card-info">
+          <div class="work-meta">
             <h3>Nova Architects</h3>
-            <p>Vollständige Markenidentität für ein modernes Architekturbüro — Logo, Geschäftsausstattung und Brand Guidelines.</p>
-            <a href="#" class="work-link">Projekt ansehen →</a>
+            <p>Brand Identity</p>
           </div>
-        </article>
+        </div>
+        <div class="work-item work-item--small">
+          <div class="work-img work-img--light">
+            <div class="mock-center">
+              <div class="mock-poster-shape"></div>
+            </div>
+          </div>
+          <div class="work-meta">
+            <h3>Jazz Festival</h3>
+            <p>Poster Design</p>
+          </div>
+        </div>
+      </div>
 
-        <article class="work-card" data-category="print">
-          <div class="work-card-img" style="background: linear-gradient(135deg, #f8b500 0%, #e95d22 100%);">
-            <div class="work-card-overlay">
-              <span class="work-card-tag">Print</span>
-            </div>
-            <div class="work-card-mockup work-card-mockup--book">
-              <div class="mock-book">
-                <div class="mock-book-page"></div>
-                <div class="mock-book-page mock-book-page--2"></div>
-              </div>
+      <div class="work-row work-row--reverse">
+        <div class="work-item work-item--small">
+          <div class="work-img work-img--cyan">
+            <div class="mock-center">
+              <div class="mock-package"></div>
             </div>
           </div>
-          <div class="work-card-info">
-            <h3>Jahresbericht 2024</h3>
-            <p>Editorialdesign für den Nachhaltigkeitsbericht eines DAX-Unternehmens.</p>
-            <a href="#" class="work-link">Projekt ansehen →</a>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="digital">
-          <div class="work-card-img" style="background: linear-gradient(135deg, #6c63ff 0%, #3d5af1 100%);">
-            <div class="work-card-overlay">
-              <span class="work-card-tag">Digital</span>
-            </div>
-            <div class="work-card-mockup work-card-mockup--screen">
-              <div class="mock-screen">
-                <div class="mock-screen-bar"></div>
-                <div class="mock-screen-content">
-                  <div class="mock-bar mock-bar--full"></div>
-                  <div class="mock-bar mock-bar--med"></div>
-                  <div class="mock-bar mock-bar--sm"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="work-card-info">
-            <h3>Bloom App UI</h3>
-            <p>Interface Design und Design System für eine Wellness-App.</p>
-            <a href="#" class="work-link">Projekt ansehen →</a>
-          </div>
-        </article>
-
-        <article class="work-card" data-category="branding">
-          <div class="work-card-img" style="background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);">
-            <div class="work-card-overlay">
-              <span class="work-card-tag">Branding</span>
-            </div>
-            <div class="work-card-mockup work-card-mockup--logo">
-              <div class="mock-logo mock-logo--alt">
-                <div class="mock-logo-circle"></div>
-                <div class="mock-logo-text">
-                  <div class="mock-bar mock-bar--lg"></div>
-                  <div class="mock-bar mock-bar--sm"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="work-card-info">
+          <div class="work-meta">
             <h3>Terra Organics</h3>
-            <p>Brand Identity und Packaging für eine Bio-Lebensmittelmarke.</p>
-            <a href="#" class="work-link">Projekt ansehen →</a>
+            <p>Packaging Design</p>
           </div>
-        </article>
-
-        <article class="work-card" data-category="illustration">
-          <div class="work-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
-            <div class="work-card-overlay">
-              <span class="work-card-tag">Illustration</span>
-            </div>
-            <div class="work-card-mockup work-card-mockup--illo">
-              <div class="mock-illo">
-                <div class="mock-illo-sun"></div>
-                <div class="mock-illo-mountain mock-illo-mountain--1"></div>
-                <div class="mock-illo-mountain mock-illo-mountain--2"></div>
+        </div>
+        <div class="work-item work-item--large">
+          <div class="work-img work-img--mid">
+            <div class="mock-center">
+              <div class="mock-screen-frame">
+                <div class="mock-screen-top"></div>
+                <div class="mock-screen-body">
+                  <div class="mock-line mock-line--full"></div>
+                  <div class="mock-line mock-line--lg"></div>
+                  <div class="mock-line mock-line--med"></div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="work-card-info">
+          <div class="work-meta">
+            <h3>Bloom App</h3>
+            <p>UI / UX Design</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="work-row">
+        <div class="work-item work-item--large">
+          <div class="work-img work-img--warm">
+            <div class="mock-center">
+              <div class="mock-book-stack">
+                <div class="mock-book-item"></div>
+                <div class="mock-book-item mock-book-item--2"></div>
+                <div class="mock-book-item mock-book-item--3"></div>
+              </div>
+            </div>
+          </div>
+          <div class="work-meta">
+            <h3>Jahresbericht 2024</h3>
+            <p>Editorial Design</p>
+          </div>
+        </div>
+        <div class="work-item work-item--small">
+          <div class="work-img work-img--neutral">
+            <div class="mock-center">
+              <div class="mock-illo-simple">
+                <div class="mock-circle-big"></div>
+                <div class="mock-circle-small"></div>
+              </div>
+            </div>
+          </div>
+          <div class="work-meta">
             <h3>Wanderlust Series</h3>
-            <p>Illustrationsreihe für ein Reisemagazin — 12-teilige Serie.</p>
-            <a href="#" class="work-link">Projekt ansehen →</a>
+            <p>Illustration</p>
           </div>
-        </article>
+        </div>
+      </div>
 
-        <article class="work-card" data-category="print">
-          <div class="work-card-img" style="background: linear-gradient(135deg, #2b2d42 0%, #8d99ae 100%);">
-            <div class="work-card-overlay">
-              <span class="work-card-tag">Print</span>
-            </div>
-            <div class="work-card-mockup work-card-mockup--poster">
-              <div class="mock-poster">
-                <div class="mock-poster-head"></div>
-                <div class="mock-bar mock-bar--med"></div>
-                <div class="mock-bar mock-bar--sm"></div>
-              </div>
-            </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <span class="label">Über mich</span>
+        <h2>Design, das<br>Geschichten<br>erzählt.</h2>
+      </div>
+      <div class="about-right">
+        <p>Mein Ansatz verbindet strategisches Denken mit handwerklichem Können. Jedes Projekt beginnt mit einer gründlichen Analyse — wer sind Sie, wer sind Ihre Kunden und was wollen Sie kommunizieren?</p>
+        <p>Das Ergebnis: Designs die nicht nur schön aussehen, sondern auch funktionieren.</p>
+        <div class="about-stats">
+          <div class="stat">
+            <span class="stat-n">8+</span>
+            <span class="stat-l">Jahre</span>
           </div>
-          <div class="work-card-info">
-            <h3>Jazz Festival Poster</h3>
-            <p>Plakatgestaltung und Printmaterialien für ein internationales Musikfestival.</p>
-            <a href="#" class="work-link">Projekt ansehen →</a>
+          <div class="stat">
+            <span class="stat-n">120+</span>
+            <span class="stat-l">Projekte</span>
           </div>
-        </article>
+          <div class="stat">
+            <span class="stat-n">60+</span>
+            <span class="stat-l">Kunden</span>
+          </div>
+        </div>
+        <div class="skills">
+          <span>Adobe Suite</span>
+          <span>Figma</span>
+          <span>Branding</span>
+          <span>Typography</span>
+          <span>Illustration</span>
+          <span>Print</span>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Services -->
-  <section class="services section" id="services">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Was ich anbiete</span>
-        <h2 class="section-title">Leistungen</h2>
+  <section class="services" id="services">
+    <div class="services-inner">
+      <div class="services-header">
+        <span class="label">Leistungen</span>
       </div>
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-icon">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="8" y="8" width="32" height="32" rx="4" stroke="currentColor" stroke-width="2.5"/>
-              <path d="M24 16L32 28H16L24 16Z" fill="currentColor" opacity="0.3"/>
-              <circle cx="24" cy="20" r="3" fill="currentColor"/>
-            </svg>
-          </div>
+      <div class="services-list">
+        <div class="service-row">
+          <span class="service-num">01</span>
           <h3>Brand Identity</h3>
-          <p>Von der ersten Idee bis zur fertigen Marke. Logo, Farben, Typografie und alle Materialien, die Ihre Identität ausmachen.</p>
-          <ul class="service-list">
-            <li>Logo &amp; Wortmarke</li>
-            <li>Farbpalette &amp; Typografie</li>
-            <li>Brand Guidelines</li>
-            <li>Geschäftsausstattung</li>
-          </ul>
+          <p>Logo, Farben, Typografie und alle Materialien, die Ihre Marke ausmachen.</p>
         </div>
-        <div class="service-card">
-          <div class="service-icon">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="6" y="10" width="36" height="28" rx="3" stroke="currentColor" stroke-width="2.5"/>
-              <path d="M6 18H42" stroke="currentColor" stroke-width="2.5"/>
-              <circle cx="11" cy="14" r="2" fill="currentColor"/>
-              <circle cx="17" cy="14" r="2" fill="currentColor"/>
-            </svg>
-          </div>
-          <h3>Web &amp; Digital Design</h3>
-          <p>Digitale Erlebnisse, die begeistern. Ich gestalte Websites und Interfaces, die sowohl schön als auch funktional sind.</p>
-          <ul class="service-list">
-            <li>Website Design</li>
-            <li>UI/UX Design</li>
-            <li>Social Media Grafiken</li>
-            <li>Newsletter Templates</li>
-          </ul>
+        <div class="service-row">
+          <span class="service-num">02</span>
+          <h3>Web &amp; Digital</h3>
+          <p>Websites und Interfaces, die sowohl schön als auch funktional sind.</p>
         </div>
-        <div class="service-card">
-          <div class="service-icon">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="6" width="28" height="36" rx="3" stroke="currentColor" stroke-width="2.5"/>
-              <path d="M16 16H32M16 22H32M16 28H24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-            </svg>
-          </div>
+        <div class="service-row">
+          <span class="service-num">03</span>
           <h3>Editorial &amp; Print</h3>
-          <p>Druckerzeugnisse mit Wirkung. Von der Visitenkarte bis zum Magazin — ich sorge für perfekte Druckvorlagen.</p>
-          <ul class="service-list">
-            <li>Broschüren &amp; Kataloge</li>
-            <li>Jahresberichte</li>
-            <li>Plakate &amp; Flyer</li>
-            <li>Verpackungsdesign</li>
-          </ul>
+          <p>Von der Visitenkarte bis zum Magazin — mit perfekten Druckvorlagen.</p>
         </div>
-        <div class="service-card">
-          <div class="service-icon">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 36C12 36 16 28 24 28C32 28 36 36 36 36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="24" cy="20" r="8" stroke="currentColor" stroke-width="2.5"/>
-              <path d="M24 12V8M24 32V36M12 20H8M40 20H36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-            </svg>
-          </div>
+        <div class="service-row">
+          <span class="service-num">04</span>
           <h3>Illustration</h3>
-          <p>Handgezeichnete oder digitale Illustrationen, die Ihrer Marke eine einzigartige visuelle Sprache verleihen.</p>
-          <ul class="service-list">
-            <li>Digitale Illustration</li>
-            <li>Icon Sets</li>
-            <li>Infografiken</li>
-            <li>Buchillustration</li>
-          </ul>
+          <p>Digitale Illustrationen, die Ihrer Marke eine einzigartige visuelle Sprache verleihen.</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="testimonials section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Kundenstimmen</span>
-        <h2 class="section-title">Was Kunden sagen</h2>
-      </div>
-      <div class="testimonials-grid">
-        <blockquote class="testimonial">
-          <p>"Mia hat unsere Marke vollständig neu gedacht. Das Ergebnis ist eine Identität, die uns perfekt repräsentiert und bei unseren Kunden enorm gut ankommt."</p>
-          <cite>
-            <strong>Thomas Berger</strong>
-            <span>CEO, Nova Architects</span>
-          </cite>
-        </blockquote>
-        <blockquote class="testimonial">
-          <p>"Die Zusammenarbeit war von Anfang an reibungslos und inspirierend. Mias kreative Herangehensweise hat unser Projekt auf ein ganz neues Level gehoben."</p>
-          <cite>
-            <strong>Lisa Müller</strong>
-            <span>Marketing Director, Terra Organics</span>
-          </cite>
-        </blockquote>
-        <blockquote class="testimonial">
-          <p>"Professionell, kreativ und immer pünktlich. Ich kann Mia jedem empfehlen, der ein ernsthaftes Design-Projekt realisieren möchte."</p>
-          <cite>
-            <strong>Jonas Weber</strong>
-            <span>Founder, Bloom App</span>
-          </cite>
-        </blockquote>
       </div>
     </div>
   </section>
 
   <!-- Contact -->
-  <section class="contact section" id="contact">
-    <div class="container">
-      <div class="contact-grid">
-        <div class="contact-info">
-          <span class="section-label">Kontakt</span>
-          <h2 class="section-title">Lass uns etwas<br>Schönes bauen</h2>
-          <p>Sie haben ein Projekt im Kopf? Ich freue mich darauf, von Ihnen zu hören. Schreiben Sie mir eine Nachricht und ich melde mich innerhalb von 24 Stunden.</p>
-          <div class="contact-details">
-            <div class="contact-detail">
-              <span class="contact-detail-label">E-Mail</span>
-              <a href="mailto:hallo@miahoffmann.de">hallo@miahoffmann.de</a>
-            </div>
-            <div class="contact-detail">
-              <span class="contact-detail-label">Standort</span>
-              <span>Berlin, Deutschland</span>
-            </div>
-            <div class="contact-detail">
-              <span class="contact-detail-label">Verfügbarkeit</span>
-              <span class="availability">Verfügbar ab Mai 2026</span>
-            </div>
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <h2>Lass uns etwas<br>Schönes bauen.</h2>
+        <div class="contact-details">
+          <div class="cdet">
+            <span class="label">E-Mail</span>
+            <a href="mailto:hallo@miahoffmann.de">hallo@miahoffmann.de</a>
           </div>
-          <div class="social-links">
-            <a href="#" class="social-link" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="2" width="20" height="20" rx="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-              </svg>
-            </a>
-            <a href="#" class="social-link" aria-label="Behance">
-              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.5 8H5v2.5h4.5a1.25 1.25 0 0 0 0-2.5zm.5 4H5V15h5a1.5 1.5 0 0 0 0-3zm4.5-1a3.5 3.5 0 0 1 3.5 3.5H15a1.5 1.5 0 0 0 3 0h-3.5A3.5 3.5 0 0 1 14.5 11zM8.5 6H3v14h6.5A3.5 3.5 0 0 0 13 16.5a3 3 0 0 0-1.2-2.4A2.5 2.5 0 0 0 12 12a3 3 0 0 0-3.5-3zM18 8h-7v1.5h7V8z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-link" aria-label="LinkedIn">
-              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
-                <circle cx="4" cy="4" r="2"/>
-              </svg>
-            </a>
+          <div class="cdet">
+            <span class="label">Standort</span>
+            <span>Berlin, Deutschland</span>
+          </div>
+          <div class="cdet">
+            <span class="label">Verfügbarkeit</span>
+            <span class="avail">Verfügbar ab Mai 2026</span>
           </div>
         </div>
-        <form class="contact-form" id="contactForm">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Ihr Name" required />
-          </div>
-          <div class="form-group">
-            <label for="email">E-Mail</label>
-            <input type="email" id="email" name="email" placeholder="ihre@email.de" required />
-          </div>
-          <div class="form-group">
-            <label for="subject">Betreff</label>
-            <select id="subject" name="subject">
-              <option value="">Projekt auswählen...</option>
-              <option value="branding">Brand Identity</option>
-              <option value="web">Web &amp; Digital</option>
-              <option value="print">Editorial &amp; Print</option>
-              <option value="illustration">Illustration</option>
-              <option value="other">Sonstiges</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="message">Nachricht</label>
-            <textarea id="message" name="message" rows="5" placeholder="Erzählen Sie mir von Ihrem Projekt..." required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary btn-full">Nachricht senden</button>
-        </form>
+        <div class="social-links">
+          <a href="#">Instagram</a>
+          <a href="#">Behance</a>
+          <a href="#">LinkedIn</a>
+        </div>
       </div>
+      <form class="contact-form" id="contactForm">
+        <div class="form-group">
+          <input type="text" placeholder="Name" required />
+        </div>
+        <div class="form-group">
+          <input type="email" placeholder="E-Mail" required />
+        </div>
+        <div class="form-group">
+          <select>
+            <option value="">Projekt auswählen...</option>
+            <option>Brand Identity</option>
+            <option>Web &amp; Digital</option>
+            <option>Editorial &amp; Print</option>
+            <option>Illustration</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <textarea rows="5" placeholder="Ihr Projekt..." required></textarea>
+        </div>
+        <button type="submit" class="btn-send">Nachricht senden</button>
+      </form>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <span class="footer-logo">Mia Hoffmann</span>
-        <p class="footer-copy">&copy; 2026 Mia Hoffmann. Alle Rechte vorbehalten.</p>
-        <a href="#" class="footer-back-top" id="backTop">Nach oben ↑</a>
-      </div>
-    </div>
+    <span class="footer-logo">Mia Hoffmann</span>
+    <span class="footer-copy">&copy; 2026</span>
+    <a href="#" id="backTop" class="footer-top">Nach oben</a>
   </footer>
 
   <script src="script.js"></script>
