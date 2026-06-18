@@ -6,8 +6,10 @@
 # Usage: ./flora-batch-download.sh [output-ordner]
 
 OUTPUT_DIR="${1:-./flora-exports}"
+PROJECT_NAME="${2:-YAK-Nomads}"
 PROJECT_ID="prj_ns71qffxy7txzn3rnpvsm75z6d88xk15"
 API_BASE="https://app.flora.ai/api/v1"
+DATE_PREFIX=$(date +%Y%m%d)
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -29,7 +31,8 @@ fi
 COUNT=0
 while IFS= read -r url; do
   COUNT=$((COUNT + 1))
-  FILENAME="bild_${COUNT}.png"
+  NUM=$(printf "%02d" $COUNT)
+  FILENAME="${DATE_PREFIX}_${PROJECT_NAME}_Flora_#${NUM}.png"
   echo "Lade Bild $COUNT: $FILENAME"
   curl -sL "$url" -o "$OUTPUT_DIR/$FILENAME"
 done <<< "$URLS"
