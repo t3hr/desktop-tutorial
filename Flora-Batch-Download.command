@@ -2,8 +2,9 @@
 # ============================================
 # Flora Batch Download – Mac Doppelklick-App
 # ============================================
-# Lädt alle fertigen Bilder aus dem Flora-Projekt herunter,
-# speichert sie als JPG + PNG mit Prompt als EXIF-Bildbeschreibung.
+# Lädt nur NEUE Bilder aus dem Flora-Projekt herunter.
+# Merkt sich bereits geladene Bilder und überspringt sie.
+# Speichert JPG/PNG mit Prompt als EXIF-Bildbeschreibung.
 #
 # Beim ersten Start wirst du nach deinem Flora API-Key gefragt.
 # Der Key wird sicher im macOS Schlüsselbund gespeichert.
@@ -13,11 +14,13 @@ PROJECT_ID="prj_ns71qffxy7txzn3rnpvsm75z6d88xk15"
 API_BASE="https://app.flora.ai/api/v1"
 DATE_PREFIX=$(date +%Y%m%d)
 CONFIG_FILE="$HOME/.flora-download-config"
+HISTORY_FILE="$HOME/.flora-download-history"
 
 # --- Farben ---
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+CYAN='\033[0;36m'
 NC='\033[0m'
 
 echo ""
@@ -55,17 +58,14 @@ fi
 # --- API-Key aus Schlüsselbund oder Config ---
 FLORA_API_KEY=""
 
-# Versuch 1: macOS Schlüsselbund
 if command -v security &>/dev/null; then
   FLORA_API_KEY=$(security find-generic-password -s "flora-api-key" -w 2>/dev/null)
 fi
 
-# Versuch 2: Config-Datei
 if [ -z "$FLORA_API_KEY" ] && [ -f "$CONFIG_FILE" ]; then
   FLORA_API_KEY=$(grep "^FLORA_API_KEY=" "$CONFIG_FILE" | cut -d'=' -f2-)
 fi
 
-# Versuch 3: Neu abfragen
 if [ -z "$FLORA_API_KEY" ]; then
   echo -e "${YELLOW}Flora API-Key benötigt${NC}"
   echo "Findest du unter: https://app.flora.ai → Settings → API Keys"
@@ -78,7 +78,6 @@ if [ -z "$FLORA_API_KEY" ]; then
     exit 1
   fi
 
-  # Im Schlüsselbund speichern
   if command -v security &>/dev/null; then
     security add-generic-password -s "flora-api-key" -a "$USER" -w "$FLORA_API_KEY" 2>/dev/null
     echo -e "${GREEN}Key im macOS Schlüsselbund gespeichert.${NC}"
@@ -89,6 +88,10 @@ if [ -z "$FLORA_API_KEY" ]; then
   fi
   echo ""
 fi
+
+# --- History laden ---
+touch "$HISTORY_FILE"
+ALREADY_DOWNLOADED=$(cat "$HISTORY_FILE")
 
 # --- Projektname ---
 read -rp "Projektname [YAK-Nomads]: " PROJECT_NAME
@@ -129,37 +132,58 @@ echo "Lade Generierungen von Flora..."
 RESPONSE=$(curl -s "$API_BASE/generations?project_id=$PROJECT_ID&status=completed&limit=100" \
   -H "Authorization: Bearer $FLORA_API_KEY")
 
-# Prüfen ob Antwort gültig
 if echo "$RESPONSE" | jq -e '.error' &>/dev/null 2>&1; then
   echo -e "${RED}API-Fehler: $(echo "$RESPONSE" | jq -r '.error')${NC}"
   read -rp "Drücke Enter zum Beenden..."
   exit 1
 fi
 
-URLS=$(echo "$RESPONSE" | jq -r '.generations[] | select(.outputs != null) | .outputs[] | select(.type == "imageUrl") | .url' 2>/dev/null)
+# --- Alle Bild-URLs und run_ids sammeln ---
+IMAGE_ENTRIES=$(echo "$RESPONSE" | jq -c '[.generations[] | select(.outputs != null) | {run_id, outputs: [.outputs[] | select(.type == "imageUrl")]} | select(.outputs | length > 0)]' 2>/dev/null)
 
-if [ -z "$URLS" ]; then
+TOTAL=$(echo "$IMAGE_ENTRIES" | jq 'length')
+
+if [ "$TOTAL" -eq 0 ]; then
   echo -e "${YELLOW}Keine fertigen Bilder gefunden.${NC}"
   read -rp "Drücke Enter zum Beenden..."
   exit 0
 fi
 
-# --- Download ---
-COUNT=0
-while IFS= read -r url; do
-  COUNT=$((COUNT + 1))
-  NUM=$(printf "%03d" $COUNT)
+# --- Neue filtern ---
+NEW_COUNT=0
+SKIP_COUNT=0
+DOWNLOAD_COUNT=0
+
+# Höchste bestehende Nummer im Zielordner finden für fortlaufende Nummerierung
+LAST_NUM=$(ls "$OUTPUT_DIR" 2>/dev/null | grep -oE '_([0-9]{3})\.' | grep -oE '[0-9]{3}' | sort -n | tail -1)
+COUNTER=${LAST_NUM:-0}
+COUNTER=$((10#$COUNTER))
+
+for i in $(seq 0 $((TOTAL - 1))); do
+  ENTRY=$(echo "$IMAGE_ENTRIES" | jq -c ".[$i]")
+  RUN_ID=$(echo "$ENTRY" | jq -r '.run_id')
+  URL=$(echo "$ENTRY" | jq -r '.outputs[0].url')
+
+  # Bereits heruntergeladen?
+  if echo "$ALREADY_DOWNLOADED" | grep -qF "$RUN_ID"; then
+    SKIP_COUNT=$((SKIP_COUNT + 1))
+    continue
+  fi
+
+  DOWNLOAD_COUNT=$((DOWNLOAD_COUNT + 1))
+  COUNTER=$((COUNTER + 1))
+  NUM=$(printf "%03d" $COUNTER)
   BASE="${DATE_PREFIX}_${PROJECT_NAME}_Flora_${NUM}"
 
   # Prompt suchen
-  PROMPT=$(echo "$RESPONSE" | jq -r --arg num "$COUNT" \
+  PROMPT=$(echo "$RESPONSE" | jq -r --arg num "$DOWNLOAD_COUNT" \
     '.generations[] | select(.outputs != null) | .outputs[] | select(.type == "text") | .url | select(startswith($num + ". "))' 2>/dev/null | head -1 | sed 's/^[0-9]*\. //')
 
   # JPG
   if [[ "$FORMAT_CHOICE" == "1" || "$FORMAT_CHOICE" == "3" ]]; then
     FILENAME="${BASE}.jpg"
-    echo -e "  ${GREEN}↓${NC} $FILENAME"
-    curl -sL "$url" -o "$OUTPUT_DIR/$FILENAME"
+    echo -e "  ${GREEN}↓${NC} $FILENAME ${CYAN}(neu)${NC}"
+    curl -sL "$URL" -o "$OUTPUT_DIR/$FILENAME"
     if [ -n "$PROMPT" ]; then
       exiftool -ImageDescription="$PROMPT" -overwrite_original "$OUTPUT_DIR/$FILENAME" >/dev/null 2>&1
     fi
@@ -168,13 +192,13 @@ while IFS= read -r url; do
   # PNG
   if [[ "$FORMAT_CHOICE" == "2" || "$FORMAT_CHOICE" == "3" ]]; then
     FILENAME_PNG="${BASE}.png"
-    echo -e "  ${GREEN}↓${NC} $FILENAME_PNG"
+    echo -e "  ${GREEN}↓${NC} $FILENAME_PNG ${CYAN}(neu)${NC}"
 
     if [[ "$FORMAT_CHOICE" == "3" ]]; then
       python3 -c "from PIL import Image; Image.open('$OUTPUT_DIR/${BASE}.jpg').save('$OUTPUT_DIR/$FILENAME_PNG', 'PNG')" 2>/dev/null
     else
       TEMP="$OUTPUT_DIR/.tmp_dl.jpg"
-      curl -sL "$url" -o "$TEMP"
+      curl -sL "$URL" -o "$TEMP"
       python3 -c "from PIL import Image; Image.open('$TEMP').save('$OUTPUT_DIR/$FILENAME_PNG', 'PNG')" 2>/dev/null
       rm -f "$TEMP"
     fi
@@ -184,16 +208,28 @@ while IFS= read -r url; do
     fi
   fi
 
-done <<< "$URLS"
+  # Run-ID als heruntergeladen markieren
+  echo "$RUN_ID" >> "$HISTORY_FILE"
+
+done
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "${GREEN}$COUNT Bilder heruntergeladen!${NC}"
+if [ "$DOWNLOAD_COUNT" -gt 0 ]; then
+  echo -e "${GREEN}$DOWNLOAD_COUNT neue Bilder heruntergeladen!${NC}"
+else
+  echo -e "${CYAN}Keine neuen Bilder seit dem letzten Download.${NC}"
+fi
+if [ "$SKIP_COUNT" -gt 0 ]; then
+  echo -e "${CYAN}$SKIP_COUNT bereits vorhandene übersprungen.${NC}"
+fi
 echo "Speicherort: $OUTPUT_DIR"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Ordner im Finder öffnen
-open "$OUTPUT_DIR" 2>/dev/null
+if [ "$DOWNLOAD_COUNT" -gt 0 ]; then
+  open "$OUTPUT_DIR" 2>/dev/null
+fi
 
 echo ""
 read -rp "Drücke Enter zum Beenden..."
