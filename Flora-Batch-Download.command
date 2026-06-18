@@ -175,8 +175,9 @@ for i in $(seq 0 $((TOTAL - 1))); do
   NUM=$(printf "%03d" $COUNTER)
   BASE="${DATE_PREFIX}_${PROJECT_NAME}_Flora_${NUM}"
 
-  # Prompt suchen
-  PROMPT=$(echo "$RESPONSE" | jq -r --arg num "$DOWNLOAD_COUNT" \
+  # Prompt suchen (rotiert durch 1-8, da der Assistent immer 8 Prompts ausgibt)
+  PROMPT_NUM=$(( ((DOWNLOAD_COUNT - 1) % 8) + 1 ))
+  PROMPT=$(echo "$RESPONSE" | jq -r --arg num "$PROMPT_NUM" \
     '.generations[] | select(.outputs != null) | .outputs[] | select(.type == "text") | .url | select(startswith($num + ". "))' 2>/dev/null | head -1 | sed 's/^[0-9]*\. //')
 
   # JPG
