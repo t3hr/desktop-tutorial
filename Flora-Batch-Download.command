@@ -185,7 +185,13 @@ for i in $(seq 0 $((TOTAL - 1))); do
     echo -e "  ${GREEN}↓${NC} $FILENAME ${CYAN}(neu)${NC}"
     curl -sL "$URL" -o "$OUTPUT_DIR/$FILENAME"
     if [ -n "$PROMPT" ]; then
-      exiftool -ImageDescription="$PROMPT" -overwrite_original "$OUTPUT_DIR/$FILENAME" >/dev/null 2>&1
+      exiftool \
+        -ImageDescription="$PROMPT" \
+        -Caption-Abstract="$PROMPT" \
+        -Description="$PROMPT" \
+        -Title="${PROJECT_NAME} ${NUM}" \
+        -ObjectName="${PROJECT_NAME} ${NUM}" \
+        -overwrite_original "$OUTPUT_DIR/$FILENAME" >/dev/null 2>&1
     fi
   fi
 
@@ -204,7 +210,13 @@ for i in $(seq 0 $((TOTAL - 1))); do
     fi
 
     if [ -n "$PROMPT" ]; then
-      exiftool -ImageDescription="$PROMPT" -overwrite_original "$OUTPUT_DIR/$FILENAME_PNG" >/dev/null 2>&1
+      exiftool \
+        -ImageDescription="$PROMPT" \
+        -Caption-Abstract="$PROMPT" \
+        -Description="$PROMPT" \
+        -Title="${PROJECT_NAME} ${NUM}" \
+        -ObjectName="${PROJECT_NAME} ${NUM}" \
+        -overwrite_original "$OUTPUT_DIR/$FILENAME_PNG" >/dev/null 2>&1
     fi
   fi
 
