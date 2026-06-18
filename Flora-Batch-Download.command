@@ -10,7 +10,7 @@
 # Der Key wird sicher im macOS Schlüsselbund gespeichert.
 # ============================================
 
-PROJECT_ID="prj_ns71qffxy7txzn3rnpvsm75z6d88xk15"
+PROJECT_ID=""
 API_BASE="https://app.flora.ai/api/v1"
 DATE_PREFIX=$(date +%Y%m%d)
 CONFIG_FILE="$HOME/.flora-download-config"
@@ -89,13 +89,63 @@ if [ -z "$FLORA_API_KEY" ]; then
   echo ""
 fi
 
-# --- History laden ---
+# --- Workspace und Projekt auswählen ---
+echo "Lade Workspaces..."
+WS_RESPONSE=$(curl -s "$API_BASE/workspaces" \
+  -H "Authorization: Bearer $FLORA_API_KEY")
+
+WORKSPACE_ID=$(echo "$WS_RESPONSE" | jq -r '.workspaces[0].workspace_id' 2>/dev/null)
+
+if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" == "null" ]; then
+  echo -e "${RED}Konnte keine Workspaces laden. Prüfe deinen API-Key.${NC}"
+  read -rp "Drücke Enter zum Beenden..."
+  exit 1
+fi
+
+echo "Lade Projekte..."
+PRJ_RESPONSE=$(curl -s "$API_BASE/projects?workspace_id=$WORKSPACE_ID&limit=50" \
+  -H "Authorization: Bearer $FLORA_API_KEY")
+
+PRJ_COUNT=$(echo "$PRJ_RESPONSE" | jq '.projects | length' 2>/dev/null)
+
+if [ "$PRJ_COUNT" -eq 0 ] || [ -z "$PRJ_COUNT" ]; then
+  echo -e "${RED}Keine Projekte gefunden.${NC}"
+  read -rp "Drücke Enter zum Beenden..."
+  exit 1
+fi
+
+echo ""
+echo "Verfügbare Projekte:"
+for idx in $(seq 0 $((PRJ_COUNT - 1))); do
+  PRJ_NAME=$(echo "$PRJ_RESPONSE" | jq -r ".projects[$idx].name")
+  echo "  $((idx + 1))) $PRJ_NAME"
+done
+
+echo ""
+read -rp "Welches Projekt? [1]: " PRJ_CHOICE
+PRJ_CHOICE=${PRJ_CHOICE:-1}
+PRJ_INDEX=$((PRJ_CHOICE - 1))
+
+PROJECT_ID=$(echo "$PRJ_RESPONSE" | jq -r ".projects[$PRJ_INDEX].project_id")
+SELECTED_NAME=$(echo "$PRJ_RESPONSE" | jq -r ".projects[$PRJ_INDEX].name")
+
+if [ -z "$PROJECT_ID" ] || [ "$PROJECT_ID" == "null" ]; then
+  echo -e "${RED}Ungültige Auswahl.${NC}"
+  read -rp "Drücke Enter zum Beenden..."
+  exit 1
+fi
+
+echo -e "${GREEN}Projekt: $SELECTED_NAME${NC}"
+
+# --- History laden (pro Projekt) ---
+HISTORY_FILE="$HOME/.flora-download-history-${PROJECT_ID}"
 touch "$HISTORY_FILE"
 ALREADY_DOWNLOADED=$(cat "$HISTORY_FILE")
 
-# --- Projektname ---
-read -rp "Projektname [YAK-Nomads]: " PROJECT_NAME
-PROJECT_NAME="${PROJECT_NAME:-YAK-Nomads}"
+# --- Projektname für Dateinamen ---
+DEFAULT_NAME=$(echo "$SELECTED_NAME" | sed 's/ /-/g')
+read -rp "Projektname für Dateinamen [$DEFAULT_NAME]: " PROJECT_NAME
+PROJECT_NAME="${PROJECT_NAME:-$DEFAULT_NAME}"
 
 # --- Zielordner per Finder-Dialog ---
 echo ""
