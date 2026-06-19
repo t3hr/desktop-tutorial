@@ -7,14 +7,17 @@
 # Merkt sich bereits geladene Bilder und überspringt sie.
 # Speichert JPG/PNG mit Prompt als EXIF-Bildbeschreibung.
 #
-# Beim ersten Start wirst du nach deinem Magnific API-Key gefragt.
-# Der Key wird sicher im macOS Schlüsselbund gespeichert.
-#
-# API-Key erstellen:
-#   https://www.magnific.com/developers/dashboard/api-key
+# Authentifizierung über Session-Cookie aus dem Browser:
+#   1. Öffne https://www.magnific.com und logge dich ein
+#   2. Öffne Dev Tools (Cmd+Option+I) → Application → Cookies
+#   3. Suche den Cookie "_pk_id" oder "session" (oder kopiere
+#      im Network-Tab den "Cookie"-Header einer beliebigen
+#      API-Anfrage)
+#   4. Beim ersten Start des Scripts einfügen
+#   Der Cookie wird sicher im macOS Schlüsselbund gespeichert.
 # ============================================
 
-API_BASE="https://api.magnific.com/v1"
+API_BASE="https://www.magnific.com/api/v1"
 HISTORY_FILE="$HOME/.magnific-download-history"
 
 # --- Farben ---
@@ -54,28 +57,36 @@ if [ -n "$MISSING" ]; then
   fi
 fi
 
-# --- API-Key aus Schlüsselbund ---
-MAGNIFIC_API_KEY=""
+# --- Session-Cookie aus Schlüsselbund ---
+MAGNIFIC_COOKIE=""
 
 if command -v security &>/dev/null; then
-  MAGNIFIC_API_KEY=$(security find-generic-password -s "magnific-api-key" -w 2>/dev/null)
+  MAGNIFIC_COOKIE=$(security find-generic-password -s "magnific-session" -w 2>/dev/null)
 fi
 
-if [ -z "$MAGNIFIC_API_KEY" ]; then
-  echo -e "${YELLOW}Magnific API-Key benötigt${NC}"
-  echo "Erstelle einen unter: https://www.magnific.com/developers/dashboard/api-key"
+if [ -z "$MAGNIFIC_COOKIE" ]; then
+  echo -e "${YELLOW}Magnific Session-Cookie benötigt${NC}"
   echo ""
-  read -rp "API-Key eingeben: " MAGNIFIC_API_KEY
+  echo "So findest du ihn:"
+  echo "  1. Öffne https://www.magnific.com im Browser (eingeloggt)"
+  echo "  2. Öffne Dev Tools: Cmd+Option+I"
+  echo "  3. Gehe zum Tab 'Network' (Netzwerk)"
+  echo "  4. Lade die Seite neu (Cmd+R)"
+  echo "  5. Klicke auf eine Anfrage die mit 'v1/' beginnt"
+  echo "  6. Unter 'Request Headers' findest du 'Cookie:'"
+  echo "  7. Kopiere den KOMPLETTEN Cookie-Wert"
+  echo ""
+  read -rp "Cookie hier einfügen: " MAGNIFIC_COOKIE
 
-  if [ -z "$MAGNIFIC_API_KEY" ]; then
-    echo -e "${RED}Kein Key eingegeben. Abbruch.${NC}"
+  if [ -z "$MAGNIFIC_COOKIE" ]; then
+    echo -e "${RED}Kein Cookie eingegeben. Abbruch.${NC}"
     read -rp "Drücke Enter zum Beenden..."
     exit 1
   fi
 
   if command -v security &>/dev/null; then
-    security add-generic-password -s "magnific-api-key" -a "$USER" -w "$MAGNIFIC_API_KEY" 2>/dev/null
-    echo -e "${GREEN}Key im macOS Schlüsselbund gespeichert.${NC}"
+    security add-generic-password -s "magnific-session" -a "$USER" -w "$MAGNIFIC_COOKIE" 2>/dev/null
+    echo -e "${GREEN}Cookie im macOS Schlüsselbund gespeichert.${NC}"
   fi
   echo ""
 fi
@@ -84,8 +95,11 @@ fi
 api_get() {
   local URL="${API_BASE}${1}"
   curl -s "$URL" \
-    -H "x-magnific-api-key: $MAGNIFIC_API_KEY" \
-    -H "Accept: application/json"
+    -H "Cookie: $MAGNIFIC_COOKIE" \
+    -H "Accept: application/json" \
+    -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" \
+    -H "Referer: https://www.magnific.com/app" \
+    -H "Origin: https://www.magnific.com"
 }
 
 # --- API-Verbindung testen ---
@@ -95,8 +109,8 @@ TEST_RESPONSE=$(api_get "/folders?onlyProjects=true")
 if [ -z "$TEST_RESPONSE" ]; then
   echo -e "${RED}Keine Antwort vom Server.${NC}"
   echo ""
-  echo "Zum Zurücksetzen des API-Keys:"
-  echo "  security delete-generic-password -s \"magnific-api-key\""
+  echo "Zum Zurücksetzen des Cookies:"
+  echo "  security delete-generic-password -s \"magnific-session\""
   read -rp "Drücke Enter zum Beenden..."
   exit 1
 fi
@@ -105,8 +119,8 @@ if echo "$TEST_RESPONSE" | jq -e '.error // .message' &>/dev/null 2>&1; then
   ERROR_MSG=$(echo "$TEST_RESPONSE" | jq -r '.error // .message // "Unbekannter Fehler"')
   echo -e "${RED}API-Fehler: $ERROR_MSG${NC}"
   echo ""
-  echo "Zum Zurücksetzen des API-Keys:"
-  echo "  security delete-generic-password -s \"magnific-api-key\""
+  echo "Zum Zurücksetzen des Cookies:"
+  echo "  security delete-generic-password -s \"magnific-session\""
   read -rp "Drücke Enter zum Beenden..."
   exit 1
 fi
@@ -118,8 +132,8 @@ if [ -z "$ITEM_COUNT" ] || [ "$ITEM_COUNT" == "null" ]; then
   echo "API-Antwort (Debug):"
   echo "$TEST_RESPONSE" | head -5
   echo ""
-  echo "Zum Zurücksetzen des API-Keys:"
-  echo "  security delete-generic-password -s \"magnific-api-key\""
+  echo "Zum Zurücksetzen des Cookies:"
+  echo "  security delete-generic-password -s \"magnific-session\""
   read -rp "Drücke Enter zum Beenden..."
   exit 1
 fi
