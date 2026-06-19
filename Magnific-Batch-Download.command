@@ -8,12 +8,11 @@
 # Speichert JPG/PNG mit Prompt als EXIF-Bildbeschreibung.
 #
 # Authentifizierung über Session-Cookie aus dem Browser:
-#   1. Öffne https://www.magnific.com und logge dich ein
-#   2. Öffne Dev Tools (Cmd+Option+I) → Application → Cookies
-#   3. Suche den Cookie "_pk_id" oder "session" (oder kopiere
-#      im Network-Tab den "Cookie"-Header einer beliebigen
-#      API-Anfrage)
-#   4. Beim ersten Start des Scripts einfügen
+#   1. Öffne https://www.magnific.com (eingeloggt)
+#   2. Dev Tools (Cmd+Option+I) → Network → klicke auf
+#      eine "folders?..." Anfrage → Headers → Request Headers
+#      → Cookie: Wert komplett kopieren
+#   3. Beim ersten Start des Scripts einfügen
 #   Der Cookie wird sicher im macOS Schlüsselbund gespeichert.
 # ============================================
 
@@ -69,12 +68,10 @@ if [ -z "$MAGNIFIC_COOKIE" ]; then
   echo ""
   echo "So findest du ihn:"
   echo "  1. Öffne https://www.magnific.com im Browser (eingeloggt)"
-  echo "  2. Öffne Dev Tools: Cmd+Option+I"
-  echo "  3. Gehe zum Tab 'Network' (Netzwerk)"
-  echo "  4. Lade die Seite neu (Cmd+R)"
-  echo "  5. Klicke auf eine Anfrage die mit 'v1/' beginnt"
-  echo "  6. Unter 'Request Headers' findest du 'Cookie:'"
-  echo "  7. Kopiere den KOMPLETTEN Cookie-Wert"
+  echo "  2. Dev Tools: Cmd+Option+I → Tab 'Network'"
+  echo "  3. Seite neu laden (Cmd+R)"
+  echo "  4. Klicke auf eine 'folders?...' Anfrage"
+  echo "  5. Unter 'Request Headers' → 'Cookie:' komplett kopieren"
   echo ""
   read -rp "Cookie hier einfügen: " MAGNIFIC_COOKIE
 
@@ -91,20 +88,39 @@ if [ -z "$MAGNIFIC_COOKIE" ]; then
   echo ""
 fi
 
+# --- User-ID und XSRF-Token aus Cookie extrahieren ---
+USER_ID=$(echo "$MAGNIFIC_COOKIE" | grep -oE 'UID=[0-9]+' | head -1 | cut -d= -f2)
+XSRF_TOKEN=$(echo "$MAGNIFIC_COOKIE" | grep -oE 'XSRF-TOKEN=[^;]+' | head -1 | cut -d= -f2- | python3 -c "import sys,urllib.parse;print(urllib.parse.unquote(sys.stdin.read().strip()))" 2>/dev/null)
+
+if [ -z "$USER_ID" ]; then
+  echo -e "${RED}Konnte User-ID nicht aus Cookie extrahieren.${NC}"
+  echo "Bitte Cookie erneuern:"
+  echo "  security delete-generic-password -s \"magnific-session\""
+  read -rp "Drücke Enter zum Beenden..."
+  exit 1
+fi
+
+echo -e "${CYAN}User-ID: $USER_ID${NC}"
+
 # --- API-Helfer ---
 api_get() {
   local URL="${API_BASE}${1}"
-  curl -s "$URL" \
-    -H "Cookie: $MAGNIFIC_COOKIE" \
+  local HEADERS=(-H "Cookie: $MAGNIFIC_COOKIE" \
     -H "Accept: application/json" \
     -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" \
     -H "Referer: https://www.magnific.com/app" \
-    -H "Origin: https://www.magnific.com"
+    -H "Origin: https://www.magnific.com")
+
+  if [ -n "$XSRF_TOKEN" ]; then
+    HEADERS+=(-H "X-XSRF-TOKEN: $XSRF_TOKEN")
+  fi
+
+  curl -s "$URL" "${HEADERS[@]}"
 }
 
 # --- API-Verbindung testen ---
 echo "Teste API-Verbindung..."
-TEST_RESPONSE=$(api_get "/folders?onlyProjects=true")
+TEST_RESPONSE=$(api_get "/folders?per_page=5&lang=en_US&user_id=$USER_ID")
 
 if [ -z "$TEST_RESPONSE" ]; then
   echo -e "${RED}Keine Antwort vom Server.${NC}"
@@ -115,27 +131,36 @@ if [ -z "$TEST_RESPONSE" ]; then
   exit 1
 fi
 
-if echo "$TEST_RESPONSE" | jq -e '.error // .message' &>/dev/null 2>&1; then
-  ERROR_MSG=$(echo "$TEST_RESPONSE" | jq -r '.error // .message // "Unbekannter Fehler"')
-  echo -e "${RED}API-Fehler: $ERROR_MSG${NC}"
+# Prüfe ob JSON und ob Daten vorhanden
+TEST_DATA=$(echo "$TEST_RESPONSE" | jq -e '.data // .items // empty' 2>/dev/null)
+if [ -z "$TEST_DATA" ]; then
+  echo -e "${RED}API-Fehler oder Session abgelaufen.${NC}"
   echo ""
-  echo "Zum Zurücksetzen des Cookies:"
+  echo "API-Antwort (Debug):"
+  echo "$TEST_RESPONSE" | head -c 300
+  echo ""
+  echo ""
+  echo "Cookie erneuern:"
   echo "  security delete-generic-password -s \"magnific-session\""
+  echo "Dann Script erneut starten und neuen Cookie einfügen."
   read -rp "Drücke Enter zum Beenden..."
   exit 1
 fi
 
-ITEM_COUNT=$(echo "$TEST_RESPONSE" | jq '.items | length' 2>/dev/null)
-if [ -z "$ITEM_COUNT" ] || [ "$ITEM_COUNT" == "null" ]; then
-  echo -e "${RED}Unerwartete API-Antwort. Ordnerstruktur konnte nicht geladen werden.${NC}"
-  echo ""
-  echo "API-Antwort (Debug):"
-  echo "$TEST_RESPONSE" | head -5
-  echo ""
-  echo "Zum Zurücksetzen des Cookies:"
-  echo "  security delete-generic-password -s \"magnific-session\""
-  read -rp "Drücke Enter zum Beenden..."
-  exit 1
+# Erkenne JSON-Struktur (data vs items)
+DATA_KEY="data"
+if echo "$TEST_RESPONSE" | jq -e '.items' &>/dev/null 2>&1; then
+  DATA_KEY="items"
+fi
+
+PAGINATION_KEY="meta"
+if echo "$TEST_RESPONSE" | jq -e '.pagination' &>/dev/null 2>&1; then
+  PAGINATION_KEY="pagination"
+fi
+
+PAGE_KEY="last_page"
+if echo "$TEST_RESPONSE" | jq -e ".$PAGINATION_KEY.lastPage" &>/dev/null 2>&1; then
+  PAGE_KEY="lastPage"
 fi
 
 echo -e "${GREEN}Verbindung OK.${NC}"
@@ -149,23 +174,28 @@ load_folders() {
   local PARENT_REF="$1"
   local PREFIX="$2"
   local RESPONSE
+  local PARAMS="per_page=100&lang=en_US&user_id=$USER_ID"
 
-  if [ -z "$PARENT_REF" ]; then
-    RESPONSE=$(api_get "/folders?onlyProjects=true")
-  else
-    RESPONSE=$(api_get "/folders?parentReference=$PARENT_REF")
+  if [ -n "$PARENT_REF" ]; then
+    PARAMS="${PARAMS}&parent_reference=$PARENT_REF"
   fi
 
+  RESPONSE=$(api_get "/folders?$PARAMS")
+
+  local ITEMS
+  ITEMS=$(echo "$RESPONSE" | jq ".$DATA_KEY" 2>/dev/null)
   local COUNT
-  COUNT=$(echo "$RESPONSE" | jq '.items | length' 2>/dev/null)
+  COUNT=$(echo "$ITEMS" | jq 'length' 2>/dev/null)
   [ -z "$COUNT" ] || [ "$COUNT" == "null" ] || [ "$COUNT" -eq 0 ] && return
 
   for idx in $(seq 0 $((COUNT - 1))); do
     local NAME
-    NAME=$(echo "$RESPONSE" | jq -r ".items[$idx].name")
+    NAME=$(echo "$ITEMS" | jq -r ".[$idx].name")
     local REF
-    REF=$(echo "$RESPONSE" | jq -r ".items[$idx].reference")
+    REF=$(echo "$ITEMS" | jq -r ".[$idx].reference // .[$idx].id // .[$idx].uuid")
     local FPATH="${PREFIX}${NAME}"
+
+    [ -z "$REF" ] || [ "$REF" == "null" ] && continue
 
     FOLDER_PATHS[$FOLDER_COUNT]="$FPATH"
     FOLDER_REFS[$FOLDER_COUNT]="$REF"
@@ -180,6 +210,10 @@ load_folders "" ""
 
 if [ "$FOLDER_COUNT" -eq 0 ]; then
   echo -e "${RED}Keine Ordner gefunden.${NC}"
+  echo ""
+  echo "Debug: API-Antwort der Ordnerabfrage:"
+  api_get "/folders?per_page=5&lang=en_US&user_id=$USER_ID" | jq '.' 2>/dev/null | head -20
+  echo ""
   read -rp "Drücke Enter zum Beenden..."
   exit 1
 fi
@@ -268,20 +302,41 @@ download_folder() {
 
   while true; do
     local SEARCH
-    SEARCH=$(api_get "/creations/search?from=folder&reference=$FOLDER_REF&fileType=image&page=$PAGE")
+    SEARCH=$(api_get "/files?page=$PAGE&per_page=50&folder_reference=$FOLDER_REF&order_direction=desc&user_id=$USER_ID")
 
     local ITEMS
-    ITEMS=$(echo "$SEARCH" | jq '.items | length' 2>/dev/null)
+    ITEMS=$(echo "$SEARCH" | jq ".$DATA_KEY // []" 2>/dev/null)
+    local ITEM_COUNT
+    ITEM_COUNT=$(echo "$ITEMS" | jq 'length' 2>/dev/null)
     local LAST_PAGE
-    LAST_PAGE=$(echo "$SEARCH" | jq '.pagination.lastPage // 1' 2>/dev/null)
+    LAST_PAGE=$(echo "$SEARCH" | jq ".$PAGINATION_KEY.$PAGE_KEY // 1" 2>/dev/null)
 
-    [ -z "$ITEMS" ] || [ "$ITEMS" == "0" ] || [ "$ITEMS" == "null" ] && break
+    [ -z "$ITEM_COUNT" ] || [ "$ITEM_COUNT" == "0" ] || [ "$ITEM_COUNT" == "null" ] && break
 
-    for j in $(seq 0 $((ITEMS - 1))); do
+    for j in $(seq 0 $((ITEM_COUNT - 1))); do
+      local ITEM
+      ITEM=$(echo "$ITEMS" | jq -c ".[$j]")
       local ID
-      ID=$(echo "$SEARCH" | jq -r ".items[$j].identifier")
+      ID=$(echo "$ITEM" | jq -r '.identifier // .id // .uuid // empty')
       local PROMPT
-      PROMPT=$(echo "$SEARCH" | jq -r ".items[$j].prompt // empty")
+      PROMPT=$(echo "$ITEM" | jq -r '.prompt // .metadata.prompt // empty')
+      local URL
+      URL=$(echo "$ITEM" | jq -r '.url // .render_url // .file_url // empty')
+      local PREVIEW_URL
+      PREVIEW_URL=$(echo "$ITEM" | jq -r '.preview_url // .previewUrl // .thumbnail_url // .thumbnailUrl // empty')
+      local CREATED_AT
+      CREATED_AT=$(echo "$ITEM" | jq -r '.created_at // .createdAt // empty')
+      local FILE_TYPE
+      FILE_TYPE=$(echo "$ITEM" | jq -r '.file_type // .type // .mime_type // empty')
+
+      [ -z "$ID" ] && continue
+
+      # Nur Bilder (keine Videos/Audio)
+      if [ -n "$FILE_TYPE" ]; then
+        case "$FILE_TYPE" in
+          *video*|*audio*) continue ;;
+        esac
+      fi
 
       # Bereits heruntergeladen?
       if echo "$ALREADY_DOWNLOADED" | grep -qF "$ID"; then
@@ -290,22 +345,20 @@ download_folder() {
         continue
       fi
 
-      # Detail-Daten holen (für Download-URL)
-      local DETAIL
-      DETAIL=$(api_get "/creations/$ID")
-      local URL
-      URL=$(echo "$DETAIL" | jq -r '.url // empty')
-      local DETAIL_PROMPT
-      DETAIL_PROMPT=$(echo "$DETAIL" | jq -r '.metadata.prompt // empty')
+      # Falls keine URL im Listenergebnis, Detail abrufen
+      if [ -z "$URL" ] || [ "$URL" == "null" ]; then
+        local DETAIL
+        DETAIL=$(api_get "/files/$ID")
+        URL=$(echo "$DETAIL" | jq -r '.url // .render_url // .file_url // .data.url // .data.render_url // empty')
+        [ -z "$PROMPT" ] && PROMPT=$(echo "$DETAIL" | jq -r '.prompt // .metadata.prompt // .data.prompt // empty')
+        [ -z "$CREATED_AT" ] && CREATED_AT=$(echo "$DETAIL" | jq -r '.created_at // .createdAt // .data.created_at // empty')
+      fi
 
-      [ -z "$PROMPT" ] && PROMPT="$DETAIL_PROMPT"
-      [ -z "$URL" ] && continue
+      [ -z "$URL" ] || [ "$URL" == "null" ] && continue
 
-      # Erstellungsdatum aus API verwenden
-      local CREATED_AT
-      CREATED_AT=$(echo "$DETAIL" | jq -r '.createdAt // empty')
+      # Erstellungsdatum
       local IMG_DATE
-      if [ -n "$CREATED_AT" ]; then
+      if [ -n "$CREATED_AT" ] && [ "$CREATED_AT" != "null" ]; then
         IMG_DATE=$(echo "$CREATED_AT" | cut -c1-10 | tr -d '-')
       else
         IMG_DATE=$(date +%Y%m%d)
@@ -321,7 +374,7 @@ download_folder() {
         echo -e "  ${GREEN}↓${NC} ${FOLDER_PATH}/${BASE}.png ${CYAN}(neu)${NC}"
         curl -sL "$URL" -o "$LOCAL_DIR/${BASE}.png"
 
-        if [ -n "$PROMPT" ]; then
+        if [ -n "$PROMPT" ] && [ "$PROMPT" != "null" ]; then
           exiftool \
             -ImageDescription="$PROMPT" \
             -Caption-Abstract="$PROMPT" \
@@ -342,7 +395,7 @@ download_folder() {
           curl -sL "$URL" -o "$LOCAL_DIR/${BASE}.jpg"
         fi
 
-        if [ -n "$PROMPT" ]; then
+        if [ -n "$PROMPT" ] && [ "$PROMPT" != "null" ]; then
           exiftool \
             -ImageDescription="$PROMPT" \
             -Caption-Abstract="$PROMPT" \
