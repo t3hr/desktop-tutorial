@@ -10,8 +10,8 @@
 # Beim ersten Start wirst du nach deinem Magnific API-Key gefragt.
 # Der Key wird sicher im macOS Schlüsselbund gespeichert.
 #
-# API-Key findest du unter:
-#   https://www.magnific.com → Einstellungen → API Keys
+# API-Key erstellen:
+#   https://www.magnific.com/developers/dashboard/api-key
 # ============================================
 
 API_BASE="https://api.magnific.com/v1"
@@ -63,7 +63,7 @@ fi
 
 if [ -z "$MAGNIFIC_API_KEY" ]; then
   echo -e "${YELLOW}Magnific API-Key benötigt${NC}"
-  echo "Findest du unter: https://www.magnific.com → Settings → API Keys"
+  echo "Erstelle einen unter: https://www.magnific.com/developers/dashboard/api-key"
   echo ""
   read -rp "API-Key eingeben: " MAGNIFIC_API_KEY
 
@@ -84,7 +84,7 @@ fi
 api_get() {
   local URL="${API_BASE}${1}"
   curl -s "$URL" \
-    -H "Authorization: Bearer $MAGNIFIC_API_KEY" \
+    -H "x-magnific-api-key: $MAGNIFIC_API_KEY" \
     -H "Accept: application/json"
 }
 
