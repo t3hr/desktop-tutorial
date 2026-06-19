@@ -15,7 +15,6 @@
 # ============================================
 
 API_BASE="https://api.magnific.com/v1"
-DATE_PREFIX=$(date +%Y%m%d)
 HISTORY_FILE="$HOME/.magnific-download-history"
 
 # --- Farben ---
@@ -221,7 +220,7 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Ordner:      $SELECTED_FOLDERS"
 echo "Zielordner:  $OUTPUT_DIR"
-echo "Datum:       $DATE_PREFIX"
+echo "Datum:       Erstellungsdatum (aus Magnific)"
 echo "Format:      $([ "$FORMAT_CHOICE" == "1" ] && echo "JPG" || ([ "$FORMAT_CHOICE" == "2" ] && echo "PNG" || echo "JPG + PNG"))"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
@@ -288,10 +287,20 @@ download_folder() {
       [ -z "$PROMPT" ] && PROMPT="$DETAIL_PROMPT"
       [ -z "$URL" ] && continue
 
+      # Erstellungsdatum aus API verwenden
+      local CREATED_AT
+      CREATED_AT=$(echo "$DETAIL" | jq -r '.createdAt // empty')
+      local IMG_DATE
+      if [ -n "$CREATED_AT" ]; then
+        IMG_DATE=$(echo "$CREATED_AT" | cut -c1-10 | tr -d '-')
+      else
+        IMG_DATE=$(date +%Y%m%d)
+      fi
+
       COUNTER=$((COUNTER + 1))
       local NUM
       NUM=$(printf "%03d" $COUNTER)
-      local BASE="${DATE_PREFIX}_${FOLDER_LABEL}_Magnific_${NUM}"
+      local BASE="${IMG_DATE}_${FOLDER_LABEL}_Magnific_${NUM}"
 
       # PNG
       if [[ "$FORMAT_CHOICE" == "2" || "$FORMAT_CHOICE" == "3" ]]; then
