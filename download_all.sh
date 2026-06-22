@@ -4,7 +4,7 @@
 # Zielordner: ~/Downloads/magnific
 
 DIR="$HOME/Downloads/magnific"
-mkdir -p "$DIR/ferrari_275gtb4"
+mkdir -p "$DIR/ferrari_275gtb4/reference_images"
 mkdir -p "$DIR/mclaren_mp46"
 
 echo "Downloading 103 Ferrari + 7 McLaren images from Magnific..."
@@ -24,7 +24,7 @@ echo ""
 echo "--- Ferrari 275 GTB/4 (103 Bilder) ---"
 
 # === Ferrari 275 GTB/4 ===
-curl -sL -o "$DIR/ferrari_275gtb4/001_fFY7nifCDY.png" "https://pikaso.cdnpk.net/private/production/4469234047/render.png?token=exp=1782518400~hmac=857f99d99e3ef7f3a194ddfe34811e0b30e7849500719e6733d0016cf270eab3" && echo "1/103"
+curl -sL -o "$DIR/ferrari_275gtb4/reference_images/001_fFY7nifCDY.png" "https://pikaso.cdnpk.net/private/production/4469234047/render.png?token=exp=1782518400~hmac=857f99d99e3ef7f3a194ddfe34811e0b30e7849500719e6733d0016cf270eab3" && echo "1/103"
 curl -sL -o "$DIR/ferrari_275gtb4/002_vujEDdta47.png" "https://pikaso.cdnpk.net/private/production/3885224298/render.png?token=exp=1782518400~hmac=7c0427761b51a2354e5f711f0afea0a900d03ad8a92b400a54f2d2875b0d16a9" && echo "2/103"
 curl -sL -o "$DIR/ferrari_275gtb4/003_swRUFCYl8e.png" "https://pikaso.cdnpk.net/private/production/3885232169/render.png?token=exp=1782518400~hmac=7aa70613825216806ff3305580d7d3c79a45adb9dd2eaa974be1701ce5d0ba00" && echo "3/103"
 curl -sL -o "$DIR/ferrari_275gtb4/004_tf1aTJYmZJ.png" "https://pikaso.cdnpk.net/private/production/3885226181/render.png?token=exp=1782518400~hmac=925932eeab7af90324eebf1cbfa106d1e68494c3d517b7bd6b0165fb66148b91" && echo "4/103"
