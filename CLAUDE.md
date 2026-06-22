@@ -27,12 +27,36 @@ Wenn der User einen Ordner nennt, schlage hier die Reference nach und rufe `crea
 | Ordner | Reference |
 |---|---|
 | Spaces/1963 Mercedes-Benz 220 SEB Heckflosse Limousine W111 | `4ca6cc5b-0ffd-4f0d-84a8-609df8cbf4b6` |
+| Spaces/1963 MB W111/architecture | `010f03f8-f41d-4a15-88e9-e9931a37fdcd` |
+| Spaces/1963 MB W111/reference images | `74e7b88c-7636-4b5b-b89e-55e2d80b73f9` |
+| Spaces/1963 MB W111/studio | `0996ed6f-1ff7-4665-8977-f907391f68ce` |
+| Spaces/1963 MB W111/urban | `7b5c603b-dbf1-4372-8610-0b4e8fc1a64a` |
 | Spaces/1967 Ferrari 330GTC | `5c1d909c-cd64-4a58-9d37-c55926213a2b` |
+| Spaces/1967 Ferrari 330GTC/reference images | `bf853b7d-d5b6-4536-8800-bbe212ccac9e` |
 | Spaces/1970 Porsche 917K | `72906fa5-fdc5-4fd1-800f-9847ae149510` |
+| Spaces/1970 Porsche 917K/racing | `425a8b5a-246b-49e3-84c1-644cc0978674` |
 | Spaces/1986 McLaren MP4/2C | `6147a134-0113-4546-8d55-529e06acc75e` |
+| Spaces/1986 McLaren MP4-2C/racing | `772bcda5-ad70-4294-b5c9-f83a1477dcf5` |
+| Spaces/1986 McLaren MP4-2C/reference images | `213c3010-e026-4d71-9d47-f57f4433ddc8` |
 | Spaces/1991 McLaren MP4/6 Honda | `1cb7d2b7-a3d2-4b53-a744-d56bfe09bfc1` |
 | Spaces/2026 racing mixed | `5091c8c3-91ad-45da-b0ca-cbe66efdf842` |
 | Spaces/fotografie | `d8d1d0f4-fa9b-4c0a-a002-a607243757e9` |
+| Spaces/fotografie/1861 Yosemite Valley Carleton Watkins | `1e196dc0-335a-4921-919e-63d2694c4da4` |
+| Spaces/fotografie/1923 Berlin August Sander | `a40e5e24-6262-46a6-bb0c-2bdce1bedac6` |
+| Spaces/fotografie/1925 Alps | `c19326e3-fe2e-43c6-be20-da9e383161ff` |
+| Spaces/fotografie/1958 zeche zollverein Albert Renger-Patzsch | `7c1280c6-667c-4d93-bab7-65bdd4f1722b` |
+| Spaces/fotografie/1964 LNDN Brian Duffy | `bf1b3395-fb19-4734-8b5a-cce35a90b327` |
+| Spaces/fotografie/1968 Paris | `ce3b639a-cd0a-4dc1-9b90-55def6d2a0f6` |
+| Spaces/fotografie/1968 Shinjuku Daido Moriyama | `04f72f2d-7e40-4308-823c-bd7f271e3311` |
+| Spaces/fotografie/1969 Kuba Alex Webb | `7972f623-32f9-42a7-98b3-e869b591bfad` |
+| Spaces/fotografie/1984 Port-au-Prince Alex Webb | `74e40263-5492-4a05-baca-5564dadadaf0` |
+| Spaces/fotografie/1989 Dhanbad Coalmine | `23a3edc4-5979-4aeb-812b-6571770093c4` |
+| Spaces/fotografie/2006 YAK Nomads | `e39776fe-7d3c-445d-a587-3656a1a200f5` |
+| Spaces/fotografie/2010 Hazaribagh leather | `c7274ba0-fe95-4449-b210-db2d588e9666` |
+| Spaces/fotografie/2012 Chittagong shipwrecks | `1d4f3f71-a32c-4b27-9ebb-22c1a2a90b06` |
+| Spaces/fotografie/2024 india | `4845d443-9078-46eb-8d56-fdccaec76f0e` |
+| Spaces/fotografie/Alex Prager | `311c8aa0-f584-4890-9502-ccbe481ad5b7` |
+| Spaces/fotografie/Edward Burtynsky Industrial Themes | `eb64d5b9-daa8-46ca-b33d-ca3210bf8f2d` |
 | Spaces/illustration | `92102a2e-8e9e-4a28-a118-ba0a40726fe0` |
 
 ### Personal/ Unterordner
@@ -42,9 +66,43 @@ Wenn der User einen Ordner nennt, schlage hier die Reference nach und rufe `crea
 | Personal/__references | `1ea0763c-67ce-46fd-91cd-f64118c43978` |
 | Personal/_download | `3b979565-87d5-4f4b-9733-6be243123388` |
 | Personal/_fotografie | `ef128f18-d7b6-4e3d-8697-35bac8ea82a4` |
+| Personal/_fotografie/android | `e0a575ba-0908-4a9e-88e2-ebd5430c7602` |
+| Personal/_fotografie/animal | `1e4ce39d-8b84-4482-8da3-db174b281bd8` |
+| Personal/_fotografie/architecture | `940cad53-b99f-45b0-85d5-18e048e08cc0` |
+| Personal/_fotografie/landscape | `8875734d-5d2c-4641-bab4-ecbf984543a3` |
+| Personal/_fotografie/mockups | `5dbfcdd5-f538-410a-a735-687b88af4f67` |
+| Personal/_fotografie/objekte | `03d78808-8698-4d49-865c-349a9f72a0ed` |
+| Personal/_fotografie/people | `96c877ce-8232-4187-aabc-f7f60169e17f` |
+| Personal/_fotografie/photoshooting | `97a3fc0a-2662-40ed-945b-c9d0ef3c2602` |
+| Personal/_fotografie/surreal | `ea35e32e-4cce-4d19-82f2-ffd5e7346914` |
 | Personal/_Illustration | `810d9e37-826d-4035-a579-53f6a5c1d11f` |
+| Personal/_Illustration/_Styles | `4cf53b66-8f6f-439f-85f2-82ab254730d7` |
+| Personal/_Illustration/animal | `d7cbddd9-b960-4abd-8bb8-45c61f9a48ee` |
+| Personal/_Illustration/architecture | `072533bd-50d7-4337-bcdf-d1c0e19b04a7` |
+| Personal/_Illustration/automotive | `a33defd0-7adf-499a-8953-1b24503bbca0` |
+| Personal/_Illustration/graphic design | `557757e9-18db-4b03-98c1-d8bca76d42b5` |
+| Personal/_Illustration/landscape | `c8f35bbb-067e-4304-adb1-d7f31f09676e` |
+| Personal/_Illustration/objects | `9abb9caf-20df-451d-9fa5-64b5fc179cae` |
+| Personal/_Illustration/people | `7967ada7-041a-421d-9f01-2ae7b5179924` |
+| Personal/_Illustration/poster illustrations | `72657ba6-a39b-4693-9584-10774abffc7a` |
+| Personal/_Illustration/typography | `42730b96-9cf4-4312-99ff-9628643d4c97` |
 | Personal/_work | `a2ff6f82-e119-45ed-9947-e40c098c064a` |
 | Personal/automotive | `91c31d31-5e02-436b-aef9-ad56ea5d00ce` |
+| Personal/automotive/___SORT | `275221c9-2a25-477f-95cb-41b481742c46` |
+| Personal/automotive/_blueprint | `df62c464-c0b2-42fe-bf3d-23a93bb6075b` |
+| Personal/automotive/_motorcycle design | `15663ec0-5fa0-44a1-aab0-21e47878adc5` |
+| Personal/automotive/_other vehicles | `3345254c-0158-4f0f-8a17-322912b23e62` |
+| Personal/automotive/_series | `adb1d895-3de1-4479-9d94-80d8206cc9ff` |
+| Personal/automotive/architecture | `6feb93d1-a0cf-4ca9-bb9e-dfb19ea365f8` |
+| Personal/automotive/backdrop | `0bb685c2-e840-433e-bf02-0b8852bd856c` |
+| Personal/automotive/camper | `4037c0d3-3e9d-4891-9f94-e2fcfb656678` |
+| Personal/automotive/car design | `12759a7c-8002-4d0c-9aee-ed0eff96bffb` |
+| Personal/automotive/fashion | `79cbfc36-066a-4471-b978-acff39648f7d` |
+| Personal/automotive/garage | `f6887944-8897-459f-a38a-374937374d7e` |
+| Personal/automotive/lost and found | `69de7b75-01e2-4a53-8956-f5d1b593b111` |
+| Personal/automotive/outdoor | `6cb58151-df06-4ae9-8af7-58dc98f620a3` |
+| Personal/automotive/racetrack | `60d2b383-f869-4f96-8d03-cc3638fa11c4` |
+| Personal/automotive/studio | `12775cc6-bde0-442b-8102-3bdc363ea517` |
 | Personal/prompts | `d6ab6738-40cc-4dbf-ad7a-37d4a4f1777a` |
 
 ### referenzbilder/ Unterordner
