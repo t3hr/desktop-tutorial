@@ -665,6 +665,39 @@
         }
       },
       "images": []
+    },
+    "Spaces/1970 Porsche 917K": {
+      "magnific_reference": "72906fa5-fdc5-4fd1-800f-9847ae149510",
+      "local_dir": "Spaces/1970-Porsche-917K",
+      "subfolders": {
+        "racing": {
+          "magnific_reference": "425a8b5a-246b-49e3-84c1-644cc0978674",
+          "local_dir": "Spaces/1970-Porsche-917K/racing",
+          "images": [
+            {
+              "id": "ubTJuajQLD",
+              "file": "20260603_1970-Porsche-917K_Magnific_147.png"
+            },
+            {
+              "id": "74u075dJAL",
+              "file": "20260603_1970-Porsche-917K_Magnific_148.png"
+            },
+            {
+              "id": "J9QTJH0Oq4",
+              "file": "20260603_1970-Porsche-917K_Magnific_149.png"
+            },
+            {
+              "id": "po9bpO1ehw",
+              "file": "20260603_1970-Porsche-917K_Magnific_150.png"
+            },
+            {
+              "id": "DB4qDUnpcl",
+              "file": "20260603_1970-Porsche-917K_Magnific_151.png"
+            }
+          ]
+        }
+      },
+      "images": []
     }
   }
 }
