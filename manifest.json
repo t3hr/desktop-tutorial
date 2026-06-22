@@ -295,6 +295,23 @@
           "file": "20260605_2026-Racing-Mixed_Magnific_155.png"
         }
       ]
+    },
+    "Spaces/1967 Ferrari 330GTC": {
+      "magnific_reference": "5c1d909c-cd64-4a58-9d37-c55926213a2b",
+      "local_dir": "Spaces/1967-Ferrari-330GTC",
+      "subfolders": {
+        "reference_images": {
+          "magnific_reference": "bf853b7d-d5b6-4536-8800-bbe212ccac9e",
+          "local_dir": "Spaces/1967-Ferrari-330GTC/reference_images",
+          "images": [
+            {
+              "id": "fFY7nifCDY",
+              "file": "20260601_1967-Ferrari-330GTC_Magnific_156.png"
+            }
+          ]
+        }
+      },
+      "images": []
     }
   }
 }
