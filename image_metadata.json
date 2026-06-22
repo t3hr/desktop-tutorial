@@ -1,0 +1,442 @@
+{
+  "fFY7nifCDY": {
+    "createdAt": "2026-06-01T19:37:19+00:00",
+    "prompt": "Vehicle: 1965–1967 Ferrari 330 GT 2+2 (Series II), Azzurro blue (covered in a heavy layer of barn-find dust), New Jersey license plate \"155-SXE\" on front and rear bumpers, classic 10-hole magnesium alloy wheels, original wood-rimmed Nardi steering wheel with a center-mounted Prancing Horse horn button, dual horizontal rear light lenses.\n\nAdd a small text caption at the very bottom of the image, centered, clean sans-serif typography, small size, light grey:[MANUFACTURER] · [MODEL] · [YEAR]\n\n{\n  \"style_name\": \"Realistic_Automotive_Blueprint_v1\",\n  \"version\": \"1.3\",\n  \"rendering_mode\": \"photographic\",\n  \"vehicle\": {\n    \"manufacturer\": \"Ferrari\",\n    \"model\": \"330 GT 2+2 (Series II)\",\n    \"year\": \"1965-1967\",\n    \"caption\": \"FERRARI · 330 GT 2+2 · 1965-1967\",\n    \"identifying_features\": {\n      \"body_color\": \"Azzurro blue, covered uniformly in a heavy layer of barn-find dust that dulls reflections and softens highlights across all views\",\n      \"wheels\": \"classic 10-hole magnesium alloy wheels, period-correct Ferrari pattern, dusty and slightly oxidized but clearly showing the ten round cooling holes\",\n      \"cockpit\": \"original wood-rimmed Nardi steering wheel with a center-mounted Prancing Horse horn button, visible through the glass; light patina on the wood, slightly dusty interior surfaces\",\n      \"engine_cover\": \"long front bonnet with subtle central power bulge and correct Series II grille and headlamp arrangement inferred from references\",\n      \"license_plates\": \"New Jersey license plate \\\"155-SXE\\\" mounted on both front and rear bumpers, slightly obscured by dust but fully legible\",\n      \"rear_lights\": \"dual horizontal rear light lenses on each side, correct for 330 GT 2+2 Series II, lightly dulled by barn dust\",\n      \"trim_chrome\": \"all chrome and brightwork slightly muted by dust layer, with soft, realistic specular highlights where dust is thinner\",\n      \"glass\": \"clear but dusty glazing with a fine, even film of barn dust, soft reflections consistent across all views\"\n    },\n    \"do_not_substitute\": \"Do not replace or approximate any identifying Ferrari 330 GT 2+2 (Series II) feature. The classic 10-hole magnesium alloy wheels, dual horizontal rear light lenses, and original Nardi wood-rimmed steering wheel must appear correctly and consistently in all views. Do not substitute wheels, tail lamps, or steering wheel design from other Ferrari models.\"\n  },\n  \"canvas\": {\n    \"width\": 3072,\n    \"height\": 5460,\n    \"aspect_ratio\": \"9:16\",\n    \"background_color\": \"#FFFFFF\"\n  },\n  \"layout\": {\n    \"rows\": [\n      { \"row\": 1, \"views\": [\"front\", \"rear\"], \"arrangement\": \"side_by_side\" },\n      { \"row\": 2, \"views\": [\"left_side\", \"right_side\"], \"arrangement\": \"stacked_vertical\" },\n      { \"row\": 3, \"views\": [\"top\"], \"arrangement\": \"centered_full_width\" }\n    ],\n    \"auto_scale_correction\": true,\n    \"consistent_scale\": true\n  },\n  \"rendering\": {\n    \"camera\": {\n      \"type\": \"orthographic\",\n      \"focal_length_mm\": 0,\n      \"exposure_ev\": 0,\n      \"white_balance_K\": 5600\n    },\n    \"lighting\": {\n      \"studio_type\": \"softbox_array\",\n      \"direction\": \"top_soft_fill\",\n      \"contrast_ratio\": 1.7,\n      \"ambient_strength\": 0.55,\n      \"description\": \"even diffused studio light from multiple angles — neutral, controlled, purely functional documentation lighting as if photographed under large format studio conditions; dust layer should be clearly visible without harsh glare\"\n    },\n    \"shadow\": {\n      \"type\": \"contact_shadow\",\n      \"color\": \"#AAA\",\n      \"opacity\": 0.7,\n      \"edge_softness\": 0.25,\n      \"length_factor\": 0.08\n    },\n    \"reflection\": {\n      \"mode\": \"reference_matched\",\n      \"description\": \"realistic reflections and specularity appropriate for a dusty barn-find Ferrari — paint reflections are softened and slightly diffused by dust, chrome has subdued but accurate highlights, glass shows softened studio reflections\"\n    },\n    \"materials\": {\n      \"source\": \"reference_images_only\",\n      \"instruction\": \"Extract all material properties — Azzurro blue paint color (under dust), wheel surface and finish, leather and interior trim, rubber quality and tone, polished metal areas and their reflection quality — directly and exclusively from the provided reference images. Respect the heavy barn-dust layer across all exterior surfaces; it should visibly mute color saturation and reflections without hiding the car’s form.\"\n    }\n  },\n  \"rules\": {\n    \"no_perspective\": true,\n    \"same_scale_all_views\": true,\n    \"single_canvas\": true,\n    \"no_annotations\": true,\n    \"no_measure_lines\": true,\n    \"no_text_labels\": true,\n    \"no_web_search\": true,\n    \"use_reference_images_only\": true,\n    \"no_cgi_aesthetic\": \"result must read as a photograph of a real Ferrari 330 GT 2+2 (Series II) under studio light — not a 3D render, not Octane, not Blender, not a CGI material simulation\",\n    \"wheel_critical\": \"classic 10-hole magnesium alloy Ferrari wheels must be correct and consistent in all views — this is non-negotiable\",\n    \"material_source_critical\": \"all surface materials, including the barn-find dust layer, are extracted from reference images only — no substitution, no interpretation, no training memory\"\n  },\n  \"goal\": \"Orthographic multi-view reference sheet of a 1965–1967 Ferrari 330 GT 2+2 (Series II) in Azzurro blue, covered in a heavy barn-find dust layer, photographed in a neutral white studio. All views under even diffused studio light, zero perspective distortion, consistent scale. Use only the provided reference images as the sole source of all visual information — vehicle geometry, surface materials, paint color, wheel design, interior details, rubber, and all dust-covered surfaces. Do not perform web searches. Do not substitute any detail from training memory. White background, no annotations, no labels, no measurement lines. Caption bottom center in small light grey sans-serif: FERRARI · 330 GT 2+2 · 1965-1967\"\n}"
+  },
+  "vujEDdta47": {
+    "createdAt": "2026-04-08T13:06:51+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nActive references in this prompt:\n@img3  — vehicle geometry and proportions\n@img2  — silhouette and structural geometry verification\n@img4  — surface details, badges, grille, wheels, trim in decay\n@img5  — multi-angle cross-reference for panel accuracy and original paint color\n@img6  — cockpit elements if visible through damage or open doors\n@[ced9fb6b-97aa-4598-ac41-fc47e07bae11:Style:output]  — color character, contrast behavior, grain intensity, print quality\n\nBackyard behind an auto shop in Tijuana, Baja California: the 1967 Ferrari 275 GTB/4 is half hidden under a sagging tarp beside an adobe wall and bougainvillea, driver door ajar with cracked side glass, allowing a partial view of the wood dash and steering wheel. Shot from overhead on a low rooftop with a Nikon F3 + 24mm lens; Kodak Ektar (original 1980s) pushes saturated color and strong contrast, making the bougainvillea magenta vivid against oxidized gold paint and rust. Composition axes chosen: vast landscape / overhead / half hidden / vehicle and environment equal. Bright coastal sun and hard shadows reveal blistered paint lifting to primer along the roof edge, orange-brown rust bleeding from trim seams, chrome window surround dulled, and inside the cabin the black seats show sun-bleached grey streaking and dust; slight warm yellow cast in highlights, cyan shadows under the tarp, and dense grain where the interior falls dark.\n\nperiod-correct color analog rendering, visible grain in shadow areas, film-characteristic color cast, aged and honest color — not corrected, not optimized — vehicle fidelity: reproduce with exact fidelity using @img3  and @img2  for geometry, @img4  for surface and detail accuracy showing period-correct decay, @img5  for panel cross-reference and original paint color reference, @img6  if cockpit visible through damage — body proportions, silhouette, roofline, wheel arch, headlights, taillights, grille, bumpers, mirrors, windows, pillars, wheels, rims, emblems, badges, decals — all at identical positions, zero deviation permitted, decay colors consistent with abandonment and location — no visible light sources no spotlights no studio elements no softbox no modern lighting no restoration no cleaning no showroom aesthetic no modern digital color grading no HDR — do NOT reproduce any reference photographically — use @img3  and @img2  for vehicle geometry — use @img4  for surface accuracy in decay — use @img5  for multi-angle cross-reference and original paint color — use @img6  only if cockpit visible through damage — apply @img1  only for color character, contrast behavior, grain intensity, and print quality — do NOT reproduce @img1  as a scene or location reference"
+  },
+  "swRUFCYl8e": {
+    "createdAt": "2026-04-08T13:06:48+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nRoute 66 roadside pull-off near Seligman, Arizona: only the rear bumper corner and twin exhaust outlets of the 1967 Ferrari 275 GTB/4 are visible, cropped tight as the rest disappears behind a leaning, windblown advertising sign and tumbleweed. Shot at eye level with a Leica M4 + 90mm lens; Agfachrome CT18 adds slightly greenish midtones with warm highlights."
+  },
+  "tf1aTJYmZJ": {
+    "createdAt": "2026-04-08T13:06:40+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nRural barn outside Ennis, Texas: the 1967 Ferrari 275 GTB/4 is parked deep in hay dust under a corrugated roof, only the front-left corner visible through a broken plank gap, the oval grille and one covered headlamp peeking out of darkness. Shot at ground level with a Canon AE-1 + 35mm lens; Kodachrome 64."
+  },
+  "rlNsCwKxtc": {
+    "createdAt": "2026-04-08T13:06:32+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nAbandoned motel parking lot outside Tonopah, Nevada: the champagne-gold 1967 Ferrari 275 GTB/4 sits half-sunk into cracked concrete beside a sun-faded pastel motel wall and dead neon, rear quarter closest to camera. Shot at knee height with a Nikon F3 + 50mm lens; Kodak Ektachrome 100."
+  },
+  "MXEdokTDCm": {
+    "createdAt": "2026-04-08T12:47:49+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nA long-telephoto compression shot from far across the headland, the coastline and road flattened into layered bands while the car reads as a precise silhouette in pure side profile hugging the asphalt."
+  },
+  "gJ27y77SXO": {
+    "createdAt": "2026-04-08T12:47:40+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nAn extreme macro study of the rear quarter — the champagne paint skin, the subtle metallic flake, and the chrome bumper curvature occupy the frame while the distant ocean becomes abstracted streaks of blue."
+  },
+  "CHlFqmeEEy": {
+    "createdAt": "2026-04-08T12:47:36+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nAn expansive elevated panorama at golden hour capturing the coastal headlands and winding road, the ocean a deep cobalt plane punctuated by white surf, the car reduced to a precise instrument within a vast seascape."
+  },
+  "e8FoI2EdqL": {
+    "createdAt": "2026-04-08T12:47:32+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nA low, ground-level panning shot along a sunlit coastal ribbon road at late afternoon."
+  },
+  "gJ2UxT8SXO": {
+    "createdAt": "2026-04-08T12:16:19+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMid-distance panning shot alongside the coupe, camera moving parallel to the car to freeze the Ferrari rear three-quarter while the underpass columns streak into horizontal motion blur."
+  },
+  "J9Yy5sxOq4": {
+    "createdAt": "2026-04-08T12:12:04+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMid-distance panning shot alongside the coupe, camera moving parallel to the car to freeze the Ferrari rear three-quarter while the underpass columns streak into horizontal motion blur."
+  },
+  "l7ZSmFAgv9": {
+    "createdAt": "2026-04-08T12:08:56+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4\nRender a tight crop on the front corner at ground level along the rocker line, focusing on the oval headlamp under its clear cover, the small amber marker, and the thin chrome bumper line."
+  },
+  "UyG7auywny": {
+    "createdAt": "2026-04-08T12:08:54+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4\nShow the interior only from the driver position, camera tucked just behind the steering wheel rim so the wood wheel, classic gauge cluster, and the wood dash fascia with its period switches read exactly as in the interior references."
+  },
+  "XtqoN3wBfo": {
+    "createdAt": "2026-04-08T12:08:54+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMid-distance front three-quarter captured on a diagonal for built-in tension: the car set against a brooding desert sky and cracked forecourt, dutch tilt lending a sense of imminent motion."
+  },
+  "MXEpOSgDCm": {
+    "createdAt": "2026-04-08T12:08:51+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4\nFrame a rear three-quarter view from knee height with a slight upward tilt so the long tail, round rear lamps, chrome bumper, and quad exhausts sit heavy against the desolate roadside setting."
+  },
+  "8vKt3yZIrU": {
+    "createdAt": "2026-04-08T12:08:50+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nVast landscape compression: the car reduced to a precision accent against distant mountains and the abandoned forecourt under heavy, layered storm clouds."
+  },
+  "xg6LoYujfW": {
+    "createdAt": "2026-04-08T12:08:47+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4\nCapture an extreme macro pressed close to the rear deck badge area so the prancing horse emblem and the spaced FERRARI letters fill the frame."
+  },
+  "poQdP5Jehw": {
+    "createdAt": "2026-04-08T12:08:45+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nA wide, elevated study of solitude beneath a slate sky: the derelict service station, cracked concrete and distant mountain ridgeline form a desaturated, cinematic backdrop while the Ferrari sits centered but small."
+  },
+  "TefM7CaVNR": {
+    "createdAt": "2026-04-08T12:08:43+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4\nPhotograph the car in strict side profile from wheel-height with a neutral, documentary stillness, letting the champagne-gold paint read exactly as referenced with its subtle surface texture."
+  },
+  "DBueO2wpcl": {
+    "createdAt": "2026-04-08T12:08:30+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nA storm-heavy desert forecourt under brooding, high-contrast clouds; extreme macro on the rear quarter: the chrome bumper, twin exhaust outlets and the circular rear lamp dominate the frame."
+  },
+  "xg6L6ADjfW": {
+    "createdAt": "2026-04-08T11:58:20+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img5 \nMultiple camera angles and compositions of the Ferrari on a bright desert roadside with blue sky."
+  },
+  "gJ2UNNQSXO": {
+    "createdAt": "2026-04-08T11:55:34+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nExtreme macro of the rear chrome prancing horse and surrounding coupe sheet metal, the champagne metallic paint capturing a single sliver of angled shaft light from the concrete underpass world."
+  },
+  "fFsEbMeCDY": {
+    "createdAt": "2026-04-08T11:54:30+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMid-distance panning shot alongside the coupe, camera moving parallel to the car to freeze the Ferrari rear three-quarter while the underpass columns streak into horizontal motion blur."
+  },
+  "oh5IfsX829": {
+    "createdAt": "2026-04-08T11:54:20+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nWide, elevated view revealing the underpass grid of repeating concrete ribs with the Ferrari small and precise in a central pool of light, the architectural shadows dominating the frame."
+  },
+  "0paVXaQTfW": {
+    "createdAt": "2026-04-08T11:54:17+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMid-distance front three-quarter composition beneath the concrete ribs of the underpass, the gold-champagne coupe occupying most of the frame with long diagonal shafts of cool light cutting across its bonnet and roof."
+  },
+  "5xyksLYKxe": {
+    "createdAt": "2026-04-08T11:54:13+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nTight crop on the left front headlight and bumper bezel, the oval glass catching a narrow beam from the underpass."
+  },
+  "1s4112zr4r": {
+    "createdAt": "2026-04-08T11:51:13+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nAbstract top-down steep view where vehicle is mostly lost in shadow bands of the underpass architecture."
+  },
+  "KjyKb2Skqp": {
+    "createdAt": "2026-04-08T11:50:19+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom extreme distance with a long telephoto compression, the underpass becomes a rhythmic field of light and shadow and the champagne-gold Ferrari is a pinpoint of mechanical intent at the far center."
+  },
+  "74z7UZwJAL": {
+    "createdAt": "2026-04-08T11:50:13+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom extreme distance with a long telephoto compression, the underpass becomes a rhythmic field of light and shadow."
+  },
+  "5xO5Qm3Kxe": {
+    "createdAt": "2026-04-08T11:49:09+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom an elevated perch roughly 4 metres above the roadway, the underpass opens into a vast chiaroscuro composition where the champagne-gold Ferrari reads as a precision instrument dwarfed by concrete ribs."
+  },
+  "3Gp34FqREY": {
+    "createdAt": "2026-04-08T11:49:03+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom an elevated perch roughly 4 metres above the roadway, the underpass opens into a vast chiaroscuro composition."
+  },
+  "3Gp3OubREY": {
+    "createdAt": "2026-04-08T11:47:46+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom extreme distance with a long telephoto compression, the underpass becomes a rhythmic field of light and shadow."
+  },
+  "xgNxHYxjfW": {
+    "createdAt": "2026-04-08T11:47:44+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nPanning alongside at speed, the camera tracks the Champagne 275 GTB/4 in a low, lateral sweep that keeps the front three-quarter sharply in focus while the underpass columns and streaked light smear into dynamic bands."
+  },
+  "WMmWRpCcXe": {
+    "createdAt": "2026-04-08T11:47:35+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom an elevated perch roughly 4 metres above the roadway, the underpass opens into a vast chiaroscuro composition."
+  },
+  "UyAU1UNwny": {
+    "createdAt": "2026-04-08T11:47:33+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nUnder a concrete underpass pierced by diagonal shafts of late-afternoon light, the champagne-gold 1967 Ferrari 275 GTB/4 Series I sits slightly forward in frame, ground-level perspective roughly 30cm above the asphalt."
+  },
+  "WMmW78lcXe": {
+    "createdAt": "2026-04-08T11:42:48+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nAbstract top-down steep view of underpass architecture with vehicle mostly lost in shadow bands."
+  },
+  "0pv0OBwTfW": {
+    "createdAt": "2026-04-08T11:42:46+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nDetail extreme macro crop of headlamp + grille corner + paint surface in the underpass."
+  },
+  "sw3svwQl8e": {
+    "createdAt": "2026-04-08T11:42:45+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nDetail tight crop on rear quarter: rear wheel, arch, lower chrome, and tail corner in the underpass."
+  },
+  "sw3shjJl8e": {
+    "createdAt": "2026-04-08T11:42:42+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nStructure extreme low tracking angle; vehicle partially occluded by dark foreground shadow band in underpass."
+  },
+  "VdfVyG5MMU": {
+    "createdAt": "2026-04-08T11:42:39+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nStructure aggressive right-edge framing; vehicle cropped at rear bumper edge in underpass with ceiling beams dominating."
+  },
+  "WMmWw6tcXe": {
+    "createdAt": "2026-04-08T11:42:38+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nFrom an elevated position, the gold Ferrari is captured in pure side profile centered on the roadway in the underpass, the fastback roofline, long bonnet and rear haunches rendered against architectural negative space."
+  },
+  "l7RlvE6gv9": {
+    "createdAt": "2026-04-08T11:42:35+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nHero vehicle very small centered in a bright sun band at mid-depth in the deep low-key underpass interior."
+  },
+  "gJZgafQSXO": {
+    "createdAt": "2026-04-08T11:42:34+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nAn extreme macro study of the rear chrome bumper and twin exhaust tips framed against the gold-painted rear quarter, clinical in mood yet charged by implied velocity."
+  },
+  "ONYOtEmynm": {
+    "createdAt": "2026-04-08T11:38:03+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I) — confirmed via web search]\n\nA long-telephoto night vista down the empty city road compresses cracked asphalt and distant towers into layered planes of light."
+  },
+  "LUiLDYoswO": {
+    "createdAt": "2026-04-08T11:37:57+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I) — confirmed via web search]\n\nA wide elevated night composition showing the silent city avenue and distant illuminated skyline, the Ferrari presented in pure side profile and made deliberately small against the urban expanse."
+  },
+  "tfktPrTmZJ": {
+    "createdAt": "2026-04-08T11:37:54+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I) — confirmed via web search]\n\nA tight nocturnal crop of the front-left assembly set against the street's warm pools and tree shadows: the left headlamp, surrounding fender curve and chrome bumper."
+  },
+  "ONYOtA6ynm": {
+    "createdAt": "2026-04-08T11:37:51+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I) — confirmed via web search]\n\nNight-time urban avenue: the Ferrari in gold metallic satin, chrome bumpers, three horizontal side vents, circular tail lamps, period steel rims. Camera positioned at ground level ~30cm along the road, front three-quarter framing."
+  },
+  "UyAUpviwny": {
+    "createdAt": "2026-04-08T11:36:15+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nAbstract B&W countryside road; vehicle partially out of frame at extreme lower right edge with extreme roll rotation."
+  },
+  "e8QeLS7dqL": {
+    "createdAt": "2026-04-08T11:36:12+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nDetail ultra-close B&W; vehicle fragmented, only a slice of body panel and wheel lip sharp with razor thin depth of field."
+  },
+  "9RT9tXiNYZ": {
+    "createdAt": "2026-04-08T11:36:07+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nDetail B&W extreme crop focusing on rear deck/roofline and right rear fender from tight rear 3/4."
+  },
+  "brJb2sb5Y2": {
+    "createdAt": "2026-04-08T11:36:02+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nStructure B&W aggressive low angle emphasizing dashed center line as dominant foreground element with vehicle mid-right."
+  },
+  "WMmWbMOcXe": {
+    "createdAt": "2026-04-08T11:35:59+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 (Series I)]\nEXACT reproduction of @img5\nHero B&W non-standard; vehicle small in lower right with dominant negative space sky and strong leading line from road center dashes."
+  },
+  "SO2ScwsUb8": {
+    "createdAt": "2026-04-08T11:33:42+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nMid-distance front three-quarter view from waist height with the vehicle filling the frame under stark midday sun on a desert shoulder. Kodachrome 64 with Rolleiflex composure."
+  },
+  "9RT9dsuNYZ": {
+    "createdAt": "2026-04-08T11:33:36+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nExtreme macro of the chrome Ferrari script and prancing horse badge on the champagne-gold paint. Kodachrome 25 with Rolleiflex TLR feel."
+  },
+  "8v58j3hIrU": {
+    "createdAt": "2026-04-08T11:33:32+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nTight, knee-height rear three-quarter view with chrome rear bumper and two round tail lamps prominently visible under harsh midday sun. Kodachrome 64 with Nikon S look."
+  },
+  "9RT9dvVNYZ": {
+    "createdAt": "2026-04-08T11:33:28+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nVast, elevated vantage looking down so the vehicle sits small and solitary on the dusty shoulder beside a long, empty two-lane road. Kodachrome 64 from a Leica M3."
+  },
+  "1s4139kr4r": {
+    "createdAt": "2026-04-08T11:32:56+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nSTUDIO REPRODUCTION\n200mm, camera height 95cm, distance 10m. MATERIAL/DETAIL tight on front fender + headlight glass + chrome lip; only 8–12% of car visible."
+  },
+  "dIFdKoQXSL": {
+    "createdAt": "2026-04-08T11:32:49+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nSTUDIO REPRODUCTION\n135mm, camera height 110cm, distance 5.5m. MATERIAL/DETAIL macro on rear quarter: circular taillight, chrome bumper corner, paint curvature; only 10–15% visible."
+  },
+  "WMmWfA7cXe": {
+    "createdAt": "2026-04-08T11:32:46+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nSTUDIO REPRODUCTION\n35mm, camera height 40cm, distance 2.2m, low angle. FORM EXPLORATION extreme low side profile slice; only 35–45% of car visible."
+  },
+  "tfktjY7mZJ": {
+    "createdAt": "2026-04-08T11:32:41+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I)\nSTUDIO REPRODUCTION\n85mm, camera height 120cm, distance 6m, level horizon. HERO front 3/4 view but cropped aggressively so the nose dominates."
+  },
+  "sw3s2Otl8e": {
+    "createdAt": "2026-04-08T11:31:58+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img5\nAbstract against pure black seamless void. Only a sliver of roofline, windshield edge, and one headlamp highlight visible; car occupies ~12% of frame."
+  },
+  "UyAUzHewny": {
+    "createdAt": "2026-04-08T11:31:48+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img5\nStructure against pure black void. Car mostly hidden in black; only rear quarter, wheel, and thin roof edge readable; visible area ~35%."
+  },
+  "cDhcawS0eP": {
+    "createdAt": "2026-04-08T11:31:45+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img5\nStructure against pure black void. Front-left quarter dominates with aggressive crop; car coverage ~80%."
+  },
+  "rl9r6Duxtc": {
+    "createdAt": "2026-04-08T11:31:42+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img5\nHero full side profile against pure black void, pushed low in frame; car occupies ~55% width with large negative space above."
+  },
+  "pouphd3ehw": {
+    "createdAt": "2026-04-08T11:27:47+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img1\nStudio cyclorama. Structure aggressive partial crop—rear wheel and tail dominate; front clipped out of frame; subject coverage 85%."
+  },
+  "gJZg7zgSXO": {
+    "createdAt": "2026-04-08T11:25:08+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I) — STUDIO REPRODUCTION: Rear 3/4 but fragmented, only rear window, trunk line, one round taillight, and exhaust tips visible (about 35–45% vehicle)."
+  },
+  "ONYO9WEynm": {
+    "createdAt": "2026-04-08T11:25:06+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I) — STUDIO REPRODUCTION: Extreme close on triple side vents + lower chrome strip, abstraction-forward."
+  },
+  "J9nJ43KOq4": {
+    "createdAt": "2026-04-08T11:25:02+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I) — STUDIO REPRODUCTION: Strict side profile but cropped, only mid-body to rear quarter visible (about 55% of vehicle)."
+  },
+  "LUiLSgvswO": {
+    "createdAt": "2026-04-08T11:24:59+00:00",
+    "prompt": "1967 Ferrari 275 GTB/4 (Series I) — STUDIO REPRODUCTION: 3/4 front hero, low height ~60cm, car pushed to lower-left, grille and left headlamp dominant."
+  },
+  "VdfVpcBMMU": {
+    "createdAt": "2026-04-08T11:24:56+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img1\nStudio cyclorama. Abstract; vehicle only ~25% visible, pushed mostly out of frame; fragmented read of hood edge + one headlamp arc."
+  },
+  "y6Wy9srPW9": {
+    "createdAt": "2026-04-08T11:24:53+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img1\nStudio cyclorama. Detail macro of rear bumper curvature and twin exhausts; vehicle occupies ~80% frame."
+  },
+  "hErhfAovqL": {
+    "createdAt": "2026-04-08T11:24:47+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img1\nStudio cyclorama. Structure top-down diagonal, car only ~55% frame, cropped at front bumper."
+  },
+  "KjyKrTJkqp": {
+    "createdAt": "2026-04-08T11:24:45+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img1\nStudio cyclorama. Structure aggressive low angle, front-left corner dominates (~85% frame)."
+  },
+  "TeaTDrMVNR": {
+    "createdAt": "2026-04-08T11:24:42+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4]\nEXACT reproduction of @img1\nStudio cyclorama. Hero front-left three-quarter, vehicle ~70% frame."
+  },
+  "ubgE2aDQLD": {
+    "createdAt": "2026-04-08T11:10:27+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nLate-afternoon overcast over windswept industrial port road; rear three-quarter strike, champagne-gold metallic body, elevated 400cm vantage with long-lens compression."
+  },
+  "YVtn1y5WeC": {
+    "createdAt": "2026-04-08T11:10:22+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nLate-afternoon overcast over windswept industrial port road; rear three-quarter strike (16:9 aspect ratio)."
+  },
+  "DBEMln6pcl": {
+    "createdAt": "2026-04-08T11:09:56+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nNight rain just ended, street-level vapor rising from black pavement, sodium and cool LED tones; tight crop of front corner visible with champagne-gold metallic paint beading with water."
+  },
+  "tfkIPZQmZJ": {
+    "createdAt": "2026-04-08T11:09:50+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nNight rain just ended, street-level vapor, tight crop of front corner (4:5 aspect ratio)."
+  },
+  "jS6xVpQLD0": {
+    "createdAt": "2026-04-08T11:09:19+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nVast roadside context with empty horizon and battered café small in frame; Ferrari tiny against the arid sweep but crisply readable (4:5 aspect ratio)."
+  },
+  "xgNrTZNjfW": {
+    "createdAt": "2026-04-08T11:09:13+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nVast roadside context with empty horizon and battered café (4:5 aspect ratio, different seed)."
+  },
+  "LUij2OpswO": {
+    "createdAt": "2026-04-08T11:03:58+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nLow-angle three-quarter rear tracking composition suggesting motion along the deserted road beside the café; camera panning alongside at roughly wheel height ~40cm."
+  },
+  "nTIzvMpYQD": {
+    "createdAt": "2026-04-08T11:03:57+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nVast roadside context with empty horizon and battered café; camera elevated ~350cm with long telephoto compression."
+  },
+  "e8QpbBCdqL": {
+    "createdAt": "2026-04-08T11:03:55+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMidday arid landscape dominated by the ruined café; mid-distance full vehicle in environment, Ferrari in profile occupying roughly one third of the frame."
+  },
+  "jS6xR5NLD0": {
+    "createdAt": "2026-04-08T11:03:51+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 Series I — confirmed via web search]\n\nMidday desert roadside scene with derelict café; extreme macro on the polished chrome prancing horse and surrounding trunk curvature."
+  },
+  "sw3L2dIl8e": {
+    "createdAt": "2026-04-08T11:03:41+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nHigh desert morning with thin pale haze; the Ferrari holds a pure side profile, full vehicle visible, champagne-gold metallic paint. Camera far distance with long telephoto compression."
+  },
+  "dIFebsNXSL": {
+    "createdAt": "2026-04-08T11:03:38+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nNight rain just ended, street-level vapor, tight crop of front corner. Camera low 70cm with dutch angle."
+  },
+  "1s4k6Ajr4r": {
+    "createdAt": "2026-04-08T11:03:37+00:00",
+    "prompt": "Realistic_Automotive_Blueprint_v1 — 1967 Ferrari 275 GTB/4 (Series I) — Orthographic multi-view reference sheet (front, rear, left side, right side, top) on white background, 9:16 canvas."
+  },
+  "9RT4DdzNYZ": {
+    "createdAt": "2026-04-08T11:03:36+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nLate-afternoon overcast over windswept industrial port road; rear three-quarter strike."
+  },
+  "vuxhs5Wa47": {
+    "createdAt": "2026-04-08T11:03:31+00:00",
+    "prompt": "[1967 Ferrari 275 GTB/4 — confirmed via web search]\n\nPre-dawn coastal highway air hanging with salt haze, damp asphalt turning into a soft mirror. The Ferrari slices through the scene, camera at ground level 30cm panning alongside at speed."
+  },
+  "DBEMCATpcl": {
+    "createdAt": "2026-04-08T11:01:57+00:00",
+    "prompt": "Photo: A gold 1967 Ferrari 275 GTB/4, viewed from multiple angles, showcasing its sleek design and classic automotive lines against a dark gray background"
+  },
+  "kLP5CJa16B": {
+    "createdAt": "2026-04-08T10:50:27+00:00",
+    "prompt": "Realistic_Automotive_Blueprint_v1 — 1967 Ferrari 275 GTB/4 (Series I) — Orthographic multi-view reference sheet (front, rear, left side, right side, top) on white background, 9:16 canvas."
+  },
+  "SO2l5VkUb8": {
+    "createdAt": "2026-04-08T10:50:04+00:00",
+    "prompt": "Technical orthographic blueprint — 1967 Ferrari 275 GTB/4 (Series I) — Line drawing with warm gray shading, 4k resolution."
+  },
+  "UyAgXhywny": {
+    "createdAt": "2026-04-08T10:40:47+00:00",
+    "prompt": "Technical orthographic blueprint — 1967 Ferrari 275 GTB/4 (Series I) — Line drawing with warm gray shading, 2k resolution."
+  },
+  "tfk8woPmZJ": {
+    "createdAt": "2026-04-08T10:39:03+00:00",
+    "prompt": "Technical orthographic blueprint — 1967 Ferrari 275 GTB/4 (Series I) — Line drawing with warm gray shading, 2k resolution."
+  },
+  "UyAgDIPwny": {
+    "createdAt": "2026-04-08T10:38:52+00:00",
+    "prompt": "Technical orthographic blueprint — 1967 Ferrari 275 GTB/4 (Series I) — Line drawing with warm gray shading, 4k resolution."
+  },
+  "0pvWvqCTfW": {
+    "createdAt": "2026-04-08T10:33:34+00:00",
+    "prompt": "Technical orthographic blueprint — 1967 Ferrari 275 GTB/4 (Series I) — Line drawing with warm gray shading, 2k resolution."
+  },
+  "EqlfsRwuuO": {
+    "createdAt": "2026-04-08T10:33:09+00:00",
+    "prompt": "Technical orthographic blueprint — 1967 Ferrari 275 GTB/4 (Series I) — Line drawing with warm gray shading, 4k resolution."
+  },
+  "J9nwZelOq4": {
+    "createdAt": "2026-04-08T10:31:15+00:00",
+    "prompt": "Realistic_Automotive_Blueprint_v1 — 1967 Ferrari 275 GTB/4 (Series I) — Orthographic multi-view reference sheet, 2k resolution."
+  },
+  "8v5Xw9TIrU": {
+    "createdAt": "2026-04-08T10:11:03+00:00",
+    "prompt": "Photo: A tan 1967 Ferrari 275 GTB/4 coupe with a black interior, parked on a gray surface with a dark gray background"
+  },
+  "tfkoJ6CmZJ": {
+    "createdAt": "2026-04-08T10:11:03+00:00",
+    "prompt": "Photo: A gold 1967 Ferrari 275 GTB/4 coupe with a dark gray background"
+  },
+  "l7RjMePgv9": {
+    "createdAt": "2026-04-08T10:11:01+00:00",
+    "prompt": "Photo: A gold 1967 Ferrari 275 GTB/4 coupe with a gray background"
+  },
+  "tfvu1humZJ": {
+    "createdAt": "2026-03-10T20:25:20+00:00",
+    "prompt": "1963 Ferrari 250 GT Lusso, human preparation scene, mechanic in oil-stained overalls checking tire pressure, pit lane at Spa-Francorchamps 1967, Nikon F3, 50mm lens, Kodachrome 64. Vehicle condition: well-maintained but genuinely driven with subtle patina."
+  },
+  "hCtKDwUvqL": {
+    "createdAt": "2026-03-03T07:00:37+00:00",
+    "prompt": "Moody cliffside dusk scene featuring a 1967 Porsche 911 race-prepped coupe in racing cream/ivory with black period-correct decals. Rain-slick mountain road, heavy overcast, dramatic rim backlight. Kodak Portra 800 film simulation. Blueprint authority system for vehicle geometry fidelity."
+  },
+  "0pJLEDDTfW": {
+    "createdAt": "2026-06-04T11:15:00+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Mechanical Detail Relic / Endurance Relic — tight detail: front suspension and tire marbling, brake dust, chipped paint, safety wire. Nikon F3 + Kodak Tri-X 400 pushed +3, 105mm macro."
+  },
+  "Ia2PmBNtvE": {
+    "createdAt": "2026-06-04T10:27:55+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Post-Stint Stillness / Endurance Relic — car parked in parc fermé gloom. Canon AE-1 + Ilford HP5 pushed +2, 35mm."
+  },
+  "1soRWger4r": {
+    "createdAt": "2026-06-04T00:00:10+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Mechanical Detail Relic / Endurance Relic — tight detail: front suspension and tire marbling. Nikon F3 + Kodak Tri-X 400 pushed +3, 105mm macro."
+  },
+  "PiqpIUP42C": {
+    "createdAt": "2026-06-03T23:59:49+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Tele Compression Speed / Endurance Relic — long straight with fencing and trees, car at full song. Nikon F3 + Kodak Tri-X 400 pushed +3, 300mm."
+  },
+  "8vZjwAXIrU": {
+    "createdAt": "2026-06-03T23:59:27+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Ignition Moment / Endurance Relic — pitlane fire-up, exhaust heat shimmer. Canon AE-1 + Kodak Tri-X 400 pushed +3, 85mm."
+  },
+  "y6HD8HRPW9": {
+    "createdAt": "2026-06-03T23:59:23+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Human Preparation / Endurance Relic — pit box pre-session, hands on wheel nuts. Nikon F3 + Ilford HP5 pushed +2, 50mm."
+  },
+  "ONFMof8ynm": {
+    "createdAt": "2026-06-03T23:59:13+00:00",
+    "prompt": "McLaren MP4/6 Honda, 1991 Formula 1, Marlboro livery, #1 — Establishing Silence / Endurance Relic — empty pitlane dawn hush, wet asphalt sheen. Leica M6 + Kodak Tri-X 400 pushed +2, 35mm."
+  }
+}
