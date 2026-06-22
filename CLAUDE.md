@@ -18,10 +18,13 @@ When the user asks to download a Magnific collection:
    - `folders_list(onlyProjects=true)` → find top-level project
    - `folders_list(parentReference=...)` → navigate to subfolder
    - `folders_list(parentReference=...)` → discover subfolders (preserve structure!)
-3. **List all images** in the collection:
-   - For folder-based collections: `creations_search(from="folder", reference=...)`
-   - For Space-based collections: `creations_search(from="project-root", reference=...)`
-   - Paginate (25 per page) until all images are found
+3. **List ALL images** in the collection (WICHTIG: immer ALLE Bilder und Unterordner):
+   - Erst alle Unterordner finden: `folders_list(parentReference=...)` — rekursiv!
+   - Dann für JEDEN Ordner (Hauptordner + alle Unterordner) Bilder suchen:
+     - `creations_search(from="folder", reference=...)` für jeden Ordner
+     - `creations_search(from="project-root", reference=...)` für Spaces
+   - Paginate (25 per page) bis ALLE Bilder gefunden sind
+   - Keine Ordner oder Bilder auslassen!
 4. **Compare with manifest** — identify new images not yet in manifest
 5. **Fetch download URLs** for new images: `creations_get(creationIdentifier=...)` → use `url` field
 6. **Generate a download script** (`download_<collection_name>.sh`) with curl commands
