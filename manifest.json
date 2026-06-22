@@ -698,6 +698,29 @@
         }
       },
       "images": []
+    },
+    "Spaces/2026 Racing Mixed": {
+      "magnific_reference": "5091c8c3-91ad-45da-b0ca-cbe66efdf842",
+      "local_dir": "Spaces/2026-Racing-Mixed",
+      "subfolders": {},
+      "images": [
+        {
+          "id": "aQWEJdmfSh",
+          "file": "20260605_2026-Racing-Mixed_Magnific_152.png"
+        },
+        {
+          "id": "J9FPpxbOq4",
+          "file": "20260605_2026-Racing-Mixed_Magnific_153.png"
+        },
+        {
+          "id": "ubVH4oyQLD",
+          "file": "20260605_2026-Racing-Mixed_Magnific_154.png"
+        },
+        {
+          "id": "5xX1RhWKxe",
+          "file": "20260605_2026-Racing-Mixed_Magnific_155.png"
+        }
+      ]
     }
   }
 }
