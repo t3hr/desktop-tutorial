@@ -177,45 +177,90 @@ echo "Format:      $([ "$FORMAT_CHOICE" == "1" ] && echo "JPG" || ([ "$FORMAT_CH
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# --- API-Abfrage ---
-echo "Lade Generierungen von Flora..."
+# --- Projekt-Typ erkennen ---
+PROJECT_ORIGIN=$(echo "$PRJ_RESPONSE" | jq -r ".projects[$PRJ_INDEX].origin")
+echo -e "Projekttyp: ${CYAN}${PROJECT_ORIGIN}${NC}"
+
+# --- Bilder sammeln (Canvas-Nodes + Generations) ---
+echo "Lade Bilder von Flora..."
+
+# Temporäre Datei für alle Bild-Einträge (id + url pro Zeile)
+ENTRIES_FILE=$(mktemp)
+
+# 1) Canvas-Nodes abfragen (funktioniert für alle Projekte)
+echo "  Prüfe Canvas-Nodes..."
+CURSOR=""
+NODE_COUNT=0
+while true; do
+  if [ -n "$CURSOR" ]; then
+    NODE_RESPONSE=$(curl -s "$API_BASE/projects/$PROJECT_ID/nodes?limit=100&cursor=$CURSOR" \
+      -H "Authorization: Bearer $FLORA_API_KEY")
+  else
+    NODE_RESPONSE=$(curl -s "$API_BASE/projects/$PROJECT_ID/nodes?limit=100" \
+      -H "Authorization: Bearer $FLORA_API_KEY")
+  fi
+
+  # Bild-Nodes extrahieren (type=image mit url)
+  NODES=$(echo "$NODE_RESPONSE" | jq -c '[.nodes[]? | select(.type == "image" and .url != null) | {id: .node_id, url: .url}]' 2>/dev/null)
+  if [ -n "$NODES" ] && [ "$NODES" != "null" ] && [ "$NODES" != "[]" ]; then
+    BATCH=$(echo "$NODES" | jq -r '.[] | .id + "\t" + .url')
+    echo "$BATCH" >> "$ENTRIES_FILE"
+    BATCH_COUNT=$(echo "$NODES" | jq 'length')
+    NODE_COUNT=$((NODE_COUNT + BATCH_COUNT))
+  fi
+
+  CURSOR=$(echo "$NODE_RESPONSE" | jq -r '.meta.next_cursor // empty' 2>/dev/null)
+  if [ -z "$CURSOR" ] || [ "$CURSOR" == "null" ]; then
+    break
+  fi
+done
+echo -e "  ${GREEN}$NODE_COUNT${NC} Bilder aus Canvas-Nodes"
+
+# 2) Generations abfragen (für nicht-Canvas-Projekte oder als Ergänzung)
+GEN_COUNT=0
 RESPONSE=$(curl -s "$API_BASE/generations?project_id=$PROJECT_ID&status=completed&limit=100" \
   -H "Authorization: Bearer $FLORA_API_KEY")
 
-if echo "$RESPONSE" | jq -e '.error' &>/dev/null 2>&1; then
-  echo -e "${RED}API-Fehler: $(echo "$RESPONSE" | jq -r '.error')${NC}"
-  read -rp "Drücke Enter zum Beenden..."
-  exit 1
+if ! echo "$RESPONSE" | jq -e '.error' &>/dev/null 2>&1; then
+  GEN_ENTRIES=$(echo "$RESPONSE" | jq -c '[.generations[]? | select(.outputs != null) | {run_id, outputs: [.outputs[] | select(.type == "imageUrl")]} | select(.outputs | length > 0)]' 2>/dev/null)
+  GEN_COUNT=$(echo "$GEN_ENTRIES" | jq 'length' 2>/dev/null)
+  GEN_COUNT=${GEN_COUNT:-0}
+
+  if [ "$GEN_COUNT" -gt 0 ]; then
+    for i in $(seq 0 $((GEN_COUNT - 1))); do
+      GEN_ID=$(echo "$GEN_ENTRIES" | jq -r ".[$i].run_id")
+      GEN_URL=$(echo "$GEN_ENTRIES" | jq -r ".[$i].outputs[0].url")
+      echo -e "${GEN_ID}\t${GEN_URL}" >> "$ENTRIES_FILE"
+    done
+  fi
+  echo -e "  ${GREEN}$GEN_COUNT${NC} Bilder aus Generations"
 fi
 
-# --- Alle Bild-URLs und run_ids sammeln ---
-IMAGE_ENTRIES=$(echo "$RESPONSE" | jq -c '[.generations[] | select(.outputs != null) | {run_id, outputs: [.outputs[] | select(.type == "imageUrl")]} | select(.outputs | length > 0)]' 2>/dev/null)
-
-TOTAL=$(echo "$IMAGE_ENTRIES" | jq 'length')
+TOTAL=$(wc -l < "$ENTRIES_FILE" | tr -d ' ')
 
 if [ "$TOTAL" -eq 0 ]; then
   echo -e "${YELLOW}Keine fertigen Bilder gefunden.${NC}"
+  rm -f "$ENTRIES_FILE"
   read -rp "Drücke Enter zum Beenden..."
   exit 0
 fi
 
-# --- Neue filtern ---
-NEW_COUNT=0
+echo -e "  ${GREEN}$TOTAL${NC} Bilder gesamt"
+echo ""
+
+# --- Neue filtern und herunterladen ---
 SKIP_COUNT=0
 DOWNLOAD_COUNT=0
 
-# Höchste bestehende Nummer im Zielordner finden für fortlaufende Nummerierung
 LAST_NUM=$(ls "$OUTPUT_DIR" 2>/dev/null | grep -oE '_([0-9]{3})\.' | grep -oE '[0-9]{3}' | sort -n | tail -1)
 COUNTER=${LAST_NUM:-0}
 COUNTER=$((10#$COUNTER))
 
-for i in $(seq 0 $((TOTAL - 1))); do
-  ENTRY=$(echo "$IMAGE_ENTRIES" | jq -c ".[$i]")
-  RUN_ID=$(echo "$ENTRY" | jq -r '.run_id')
-  URL=$(echo "$ENTRY" | jq -r '.outputs[0].url')
+while IFS=$'\t' read -r ITEM_ID URL; do
+  [ -z "$ITEM_ID" ] && continue
 
   # Bereits heruntergeladen?
-  if echo "$ALREADY_DOWNLOADED" | grep -qF "$RUN_ID"; then
+  if echo "$ALREADY_DOWNLOADED" | grep -qF "$ITEM_ID"; then
     SKIP_COUNT=$((SKIP_COUNT + 1))
     continue
   fi
@@ -225,25 +270,11 @@ for i in $(seq 0 $((TOTAL - 1))); do
   NUM=$(printf "%03d" $COUNTER)
   BASE="${DATE_PREFIX}_${PROJECT_NAME}_Flora_${NUM}"
 
-  # Prompt suchen (rotiert durch 1-8, da der Assistent immer 8 Prompts ausgibt)
-  PROMPT_NUM=$(( ((DOWNLOAD_COUNT - 1) % 8) + 1 ))
-  PROMPT=$(echo "$RESPONSE" | jq -r --arg num "$PROMPT_NUM" \
-    '.generations[] | select(.outputs != null) | .outputs[] | select(.type == "text") | .url | select(startswith($num + ". "))' 2>/dev/null | head -1 | sed 's/^[0-9]*\. //')
-
   # JPG
   if [[ "$FORMAT_CHOICE" == "1" || "$FORMAT_CHOICE" == "3" ]]; then
     FILENAME="${BASE}.jpg"
     echo -e "  ${GREEN}↓${NC} $FILENAME ${CYAN}(neu)${NC}"
     curl -sL "$URL" -o "$OUTPUT_DIR/$FILENAME"
-    if [ -n "$PROMPT" ]; then
-      exiftool \
-        -ImageDescription="$PROMPT" \
-        -Caption-Abstract="$PROMPT" \
-        -Description="$PROMPT" \
-        -Title="${PROJECT_NAME} ${NUM}" \
-        -ObjectName="${PROJECT_NAME} ${NUM}" \
-        -overwrite_original "$OUTPUT_DIR/$FILENAME" >/dev/null 2>&1
-    fi
   fi
 
   # PNG
@@ -259,22 +290,24 @@ for i in $(seq 0 $((TOTAL - 1))); do
       python3 -c "from PIL import Image; Image.open('$TEMP').save('$OUTPUT_DIR/$FILENAME_PNG', 'PNG')" 2>/dev/null
       rm -f "$TEMP"
     fi
-
-    if [ -n "$PROMPT" ]; then
-      exiftool \
-        -ImageDescription="$PROMPT" \
-        -Caption-Abstract="$PROMPT" \
-        -Description="$PROMPT" \
-        -Title="${PROJECT_NAME} ${NUM}" \
-        -ObjectName="${PROJECT_NAME} ${NUM}" \
-        -overwrite_original "$OUTPUT_DIR/$FILENAME_PNG" >/dev/null 2>&1
-    fi
   fi
 
-  # Run-ID als heruntergeladen markieren
-  echo "$RUN_ID" >> "$HISTORY_FILE"
+  # EXIF schreiben (Title mit Projektname)
+  for F in "$OUTPUT_DIR/${BASE}.jpg" "$OUTPUT_DIR/${BASE}.png"; do
+    if [ -f "$F" ]; then
+      exiftool \
+        -Title="${PROJECT_NAME} ${NUM}" \
+        -ObjectName="${PROJECT_NAME} ${NUM}" \
+        -overwrite_original "$F" >/dev/null 2>&1
+    fi
+  done
 
-done
+  # ID als heruntergeladen markieren
+  echo "$ITEM_ID" >> "$HISTORY_FILE"
+
+done < "$ENTRIES_FILE"
+
+rm -f "$ENTRIES_FILE"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
