@@ -181,10 +181,34 @@ echo ""
 PROJECT_ORIGIN=$(echo "$PRJ_RESPONSE" | jq -r ".projects[$PRJ_INDEX].origin")
 echo -e "Projekttyp: ${CYAN}${PROJECT_ORIGIN}${NC}"
 
-# --- Bilder sammeln (Canvas-Nodes + Generations) ---
-echo "Lade Bilder von Flora..."
+# --- Prompts aus Text-Nodes sammeln ---
+echo "Lade Prompts und Bilder von Flora..."
+PROMPTS_FILE=$(mktemp)
+PROMPT_CURSOR=""
+PROMPT_COUNT=0
+while true; do
+  if [ -n "$PROMPT_CURSOR" ]; then
+    PROMPT_RESPONSE=$(curl -s "$API_BASE/projects/$PROJECT_ID/nodes?limit=100&cursor=$PROMPT_CURSOR" \
+      -H "Authorization: Bearer $FLORA_API_KEY")
+  else
+    PROMPT_RESPONSE=$(curl -s "$API_BASE/projects/$PROJECT_ID/nodes?limit=100" \
+      -H "Authorization: Bearer $FLORA_API_KEY")
+  fi
 
-# Temporäre Datei für alle Bild-Einträge (id + url pro Zeile)
+  # Text-Nodes extrahieren (url enthält den Prompt-Text)
+  echo "$PROMPT_RESPONSE" | jq -r '.nodes[]? | select(.type == "text" and .url != null) | .url' 2>/dev/null >> "$PROMPTS_FILE"
+  BATCH_P=$(echo "$PROMPT_RESPONSE" | jq '[.nodes[]? | select(.type == "text" and .url != null)] | length' 2>/dev/null)
+  PROMPT_COUNT=$((PROMPT_COUNT + ${BATCH_P:-0}))
+
+  PROMPT_CURSOR=$(echo "$PROMPT_RESPONSE" | jq -r '.meta.next_cursor // empty' 2>/dev/null)
+  if [ -z "$PROMPT_CURSOR" ] || [ "$PROMPT_CURSOR" == "null" ]; then
+    break
+  fi
+done
+echo -e "  ${GREEN}$PROMPT_COUNT${NC} Prompts aus Text-Nodes"
+
+# --- Bilder sammeln (Canvas-Nodes + Generations) ---
+# Temporäre Datei für alle Bild-Einträge (id + url + model pro Zeile)
 ENTRIES_FILE=$(mktemp)
 
 # 1) Canvas-Nodes abfragen (funktioniert für alle Projekte)
@@ -203,7 +227,7 @@ while true; do
   # Bild-Nodes extrahieren (type=image mit url)
   NODES=$(echo "$NODE_RESPONSE" | jq -c '[.nodes[]? | select(.type == "image" and .url != null) | {id: .node_id, url: .url}]' 2>/dev/null)
   if [ -n "$NODES" ] && [ "$NODES" != "null" ] && [ "$NODES" != "[]" ]; then
-    BATCH=$(echo "$NODES" | jq -r '.[] | .id + "\t" + .url')
+    BATCH=$(echo "$NODES" | jq -r '.[] | .id + "\t" + .url + "\t" + "canvas"')
     echo "$BATCH" >> "$ENTRIES_FILE"
     BATCH_COUNT=$(echo "$NODES" | jq 'length')
     NODE_COUNT=$((NODE_COUNT + BATCH_COUNT))
@@ -233,13 +257,13 @@ while true; do
     break
   fi
 
-  # Nur Generations für das gewählte Projekt filtern, mit imageUrl-Outputs
+  # Nur Generations für das gewählte Projekt filtern, mit imageUrl-Outputs + Model
   BATCH_ENTRIES=$(echo "$GEN_RESPONSE" | jq -c --arg pid "$PROJECT_ID" \
-    '[.generations[]? | select(.project_id == $pid and .outputs != null) | {run_id} + (.outputs[]? | select(.type == "imageUrl")) | {id: .run_id, url: .url}]' 2>/dev/null)
+    '[.generations[]? | select(.project_id == $pid and .outputs != null) | . as $g | .outputs[]? | select(.type == "imageUrl") | {id: $g.run_id, url: .url, model: ($g.model.model_id // "unknown")}]' 2>/dev/null)
 
   if [ -n "$BATCH_ENTRIES" ] && [ "$BATCH_ENTRIES" != "null" ] && [ "$BATCH_ENTRIES" != "[]" ]; then
     BATCH_COUNT=$(echo "$BATCH_ENTRIES" | jq 'length')
-    echo "$BATCH_ENTRIES" | jq -r '.[] | .id + "\t" + .url' >> "$ENTRIES_FILE"
+    echo "$BATCH_ENTRIES" | jq -r '.[] | .id + "\t" + .url + "\t" + .model' >> "$ENTRIES_FILE"
     GEN_COUNT=$((GEN_COUNT + BATCH_COUNT))
   fi
 
@@ -248,32 +272,87 @@ while true; do
     break
   fi
 
-  # Fortschritt anzeigen
   echo -ne "\r  ${GREEN}$GEN_COUNT${NC} Generations gefunden..."
 done
 echo -e "\r  ${GREEN}$GEN_COUNT${NC} Bilder aus Generations        "
+
+# --- URL-Deduplizierung ---
+DEDUP_FILE=$(mktemp)
+SEEN_URLS_FILE=$(mktemp)
+TOTAL_RAW=$(wc -l < "$ENTRIES_FILE" | tr -d ' ')
+DUPES=0
+while IFS=$'\t' read -r DID DURL DMODEL; do
+  [ -z "$DURL" ] && continue
+  if grep -qF "$DURL" "$SEEN_URLS_FILE" 2>/dev/null; then
+    DUPES=$((DUPES + 1))
+    continue
+  fi
+  echo "$DURL" >> "$SEEN_URLS_FILE"
+  printf '%s\t%s\t%s\n' "$DID" "$DURL" "$DMODEL" >> "$DEDUP_FILE"
+done < "$ENTRIES_FILE"
+rm -f "$ENTRIES_FILE" "$SEEN_URLS_FILE"
+ENTRIES_FILE="$DEDUP_FILE"
 
 TOTAL=$(wc -l < "$ENTRIES_FILE" | tr -d ' ')
 
 if [ "$TOTAL" -eq 0 ]; then
   echo -e "${YELLOW}Keine fertigen Bilder gefunden.${NC}"
-  rm -f "$ENTRIES_FILE"
+  rm -f "$ENTRIES_FILE" "$PROMPTS_FILE"
   read -rp "Drücke Enter zum Beenden..."
   exit 0
 fi
 
-echo -e "  ${GREEN}$TOTAL${NC} Bilder gesamt"
+echo -e "  ${GREEN}$TOTAL${NC} einzigartige Bilder (${DUPES} Duplikate entfernt)"
+echo ""
+
+# --- Prompts-Datei vorbereiten ---
+# Einzigartige Prompts sammeln (Leerzeilen und Duplikate entfernen)
+UNIQUE_PROMPTS_FILE=$(mktemp)
+if [ -s "$PROMPTS_FILE" ]; then
+  # Prompts durch Trennlinie separieren, Duplikate entfernen
+  awk 'NF' "$PROMPTS_FILE" | sort -u > "$UNIQUE_PROMPTS_FILE"
+  UNIQUE_PROMPT_COUNT=$(wc -l < "$UNIQUE_PROMPTS_FILE" | tr -d ' ')
+  echo -e "  ${GREEN}$UNIQUE_PROMPT_COUNT${NC} einzigartige Prompts gesammelt"
+
+  # Prompts als Sidecar-Datei speichern
+  PROMPTS_SIDECAR="$OUTPUT_DIR/${PROJECT_NAME}_prompts.txt"
+  {
+    echo "# Flora Projekt: $SELECTED_NAME"
+    echo "# Projekt-ID: $PROJECT_ID"
+    echo "# Exportiert: $(date '+%Y-%m-%d %H:%M')"
+    echo "# $UNIQUE_PROMPT_COUNT einzigartige Prompts"
+    echo ""
+    IDX=0
+    while IFS= read -r PROMPT_LINE; do
+      IDX=$((IDX + 1))
+      echo "--- Prompt $IDX ---"
+      echo "$PROMPT_LINE"
+      echo ""
+    done < "$UNIQUE_PROMPTS_FILE"
+  } > "$PROMPTS_SIDECAR"
+  echo -e "  ${GREEN}✓${NC} Prompts gespeichert: $(basename "$PROMPTS_SIDECAR")"
+else
+  UNIQUE_PROMPT_COUNT=0
+fi
+
+# Bei genau 1 Prompt → wird direkt als EXIF-Beschreibung geschrieben
+SINGLE_PROMPT=""
+if [ "$UNIQUE_PROMPT_COUNT" -eq 1 ]; then
+  SINGLE_PROMPT=$(cat "$UNIQUE_PROMPTS_FILE")
+fi
+
 echo ""
 
 # --- Neue filtern und herunterladen ---
 SKIP_COUNT=0
 DOWNLOAD_COUNT=0
+URL_SKIP=0
 
 LAST_NUM=$(ls "$OUTPUT_DIR" 2>/dev/null | grep -oE '_([0-9]{3})\.' | grep -oE '[0-9]{3}' | sort -n | tail -1)
 COUNTER=${LAST_NUM:-0}
 COUNTER=$((10#$COUNTER))
 
-while IFS=$'\t' read -r ITEM_ID URL; do
+while IFS=$'\t' read -r ITEM_ID URL MODEL; do
   [ -z "$ITEM_ID" ] && continue
 
   # Bereits heruntergeladen?
@@ -309,13 +388,34 @@ while IFS=$'\t' read -r ITEM_ID URL; do
     fi
   fi
 
-  # EXIF schreiben (Title mit Projektname)
+  # EXIF/IPTC schreiben (Lightroom-kompatibel)
+  EXIF_DESC=""
+  if [ -n "$SINGLE_PROMPT" ]; then
+    EXIF_DESC="$SINGLE_PROMPT"
+  elif [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
+    EXIF_DESC="Flora Projekt: $SELECTED_NAME | Siehe ${PROJECT_NAME}_prompts.txt für alle Prompts"
+  fi
+
+  MODEL_INFO="${MODEL:-unknown}"
+
   for F in "$OUTPUT_DIR/${BASE}.jpg" "$OUTPUT_DIR/${BASE}.png"; do
     if [ -f "$F" ]; then
-      exiftool \
-        -Title="${PROJECT_NAME} ${NUM}" \
-        -ObjectName="${PROJECT_NAME} ${NUM}" \
-        -overwrite_original "$F" >/dev/null 2>&1
+      if [ -n "$EXIF_DESC" ]; then
+        exiftool \
+          -ImageDescription="$EXIF_DESC" \
+          -Caption-Abstract="$EXIF_DESC" \
+          -Description="$EXIF_DESC" \
+          -Title="${PROJECT_NAME} ${NUM}" \
+          -ObjectName="${PROJECT_NAME} ${NUM}" \
+          -Software="Flora AI ($MODEL_INFO)" \
+          -overwrite_original "$F" >/dev/null 2>&1
+      else
+        exiftool \
+          -Title="${PROJECT_NAME} ${NUM}" \
+          -ObjectName="${PROJECT_NAME} ${NUM}" \
+          -Software="Flora AI ($MODEL_INFO)" \
+          -overwrite_original "$F" >/dev/null 2>&1
+      fi
     fi
   done
 
@@ -324,7 +424,7 @@ while IFS=$'\t' read -r ITEM_ID URL; do
 
 done < "$ENTRIES_FILE"
 
-rm -f "$ENTRIES_FILE"
+rm -f "$ENTRIES_FILE" "$PROMPTS_FILE" "$UNIQUE_PROMPTS_FILE"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
