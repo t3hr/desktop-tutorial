@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photographer Fingerprint Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            background: #252525;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #bbb;
+        }
+
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #6ba3e5;
+            box-shadow: 0 0 0 3px rgba(107, 163, 229, 0.1);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .fingerprint-preview {
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #aaa;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6ba3e5 0%, #5a93d5 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #7bb0ed, #6aa3dd);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 163, 229, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .output-section {
+            margin-top: 20px;
+        }
+
+        .prompt-box {
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            padding: 15px;
+            min-height: 100px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.9em;
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #0f0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            background: #4a4a4a;
+            margin-top: 10px;
+            font-size: 0.9em;
+            padding: 10px 16px;
+        }
+
+        .copy-btn:hover {
+            background: #5a5a5a;
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 0.85em;
+        }
+
+        .metadata-item {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #6ba3e5;
+        }
+
+        .metadata-label {
+            color: #aaa;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .metadata-value {
+            color: #0f0;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .examples {
+            background: #252525;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .examples h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .example-btn {
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            color: #e0e0e0;
+        }
+
+        .example-btn:hover {
+            border-color: #6ba3e5;
+            background: #2a2a2a;
+        }
+
+        .example-btn-title {
+            font-weight: 600;
+            color: #6ba3e5;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+        }
+
+        .example-btn-desc {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📸 Photographer Fingerprint Generator</h1>
+            <p class="subtitle">Transform photographer styles into optimized AI image prompts</p>
+        </header>
+
+        <div class="content">
+            <!-- LEFT PANEL: INPUT -->
+            <div class="panel">
+                <h2>Create Your Prompt</h2>
+
+                <div class="form-group">
+                    <label for="photographer">Select Photographer</label>
+                    <select id="photographer" onchange="updateFingerprint()">
+                        <option value="">Choose a photographer...</option>
+                    </select>
+                    <div class="fingerprint-preview" id="fingerprint"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Describe Your Scene *</label>
+                    <textarea id="subject" placeholder="e.g., An elderly woman resting after working in a field..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="mood">Mood / Emotion (optional)</label>
+                    <input type="text" id="mood" placeholder="e.g., melancholic, hopeful, intense">
+                </div>
+
+                <div class="form-group">
+                    <label for="style">Additional Style (optional)</label>
+                    <input type="text" id="style" placeholder="e.g., harsh shadows, film noir, golden hour">
+                </div>
+
+                <div class="form-group">
+                    <label for="generator">Select Image Generator</label>
+                    <select id="generator">
+                        <option value="">Choose a generator...</option>
+                    </select>
+                </div>
+
+                <button onclick="generatePrompt()">✨ Generate Prompt</button>
+            </div>
+
+            <!-- RIGHT PANEL: OUTPUT -->
+            <div class="panel">
+                <h2>Your Prompt</h2>
+
+                <div class="output-section">
+                    <div class="prompt-box" id="promptOutput">
+                        [Prompt will appear here]
+                    </div>
+                    <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                </div>
+
+                <div class="metadata" id="metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Photographer</span>
+                        <span class="metadata-value" id="metaPhotographer">—</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Generator</span>
+                        <span class="metadata-value" id="metaGenerator">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXAMPLES -->
+        <div class="examples">
+            <h2>💡 Quick Examples</h2>
+            <div class="example-grid" id="examplesGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        // PHOTOGRAPHER DATABASE
+        const photographers = {
+            "koudelka": {
+                "name": "Josef Koudelka",
+                "nationality": "Czech-French",
+                "birth_year": 1938,
+                "fingerprint_short": "Master of dramatic B&W documentary-humanism. Grainy, high-contrast B&W with Leica wide-angle, hard sidelight, geometrically precise compositions.",
+                "characteristics": [
+                    "Extreme high contrast",
+                    "Visible coarse grain",
+                    "Hard geometric light",
+                    "Documentary honesty",
+                    "Spatial depth emphasis",
+                    "Wide-angle perspective"
+                ],
+                "emotional_palette": ["gravitas", "melancholic", "politically-aware", "intense", "truthful"],
+                "technical": {
+                    "color_language": "100% B&W, extreme high contrast, crushed blacks",
+                    "film_stock": "Kodak Tri-X, HP5",
+                    "grain": "Medium to strong, intentionally visible",
+                    "camera": "Leica M-series",
+                    "lens": "Wide-angle: 28mm, 35mm",
+                    "exposure": "Underexposed, dark aesthetic",
+                    "tonality": "Extreme contrast, few mid-tones"
+                },
+                "composition": {
+                    "lighting": "Hard directional light, sidelight, backlighting, strong shadows",
+                    "perspective": "Eye-level, human scale, documentary",
+                    "depth": "Continuously focused, spatial complexity",
+                    "negative_space": "Generous but dramatic, emptiness has meaning"
+                }
+            },
+            "salgado": {
+                "name": "Sebastião Salgado",
+                "nationality": "Brazilian",
+                "birth_year": 1944,
+                "fingerprint_short": "Epic humanist of B&W photography. Monumental compositions with humans in landscapes, soft diffuse light, poetic-melancholic tonality.",
+                "characteristics": [
+                    "Monumental scale",
+                    "Soft diffuse light",
+                    "Fine film grain",
+                    "Humans in nature",
+                    "Poetic romantic tonality",
+                    "Multiple spatial planes"
+                ],
+                "emotional_palette": ["dignity", "hope", "melancholy", "sublime", "respectful", "poetic"],
+                "technical": {
+                    "color_language": "99% B&W, rich grey tones, melancholic-warm",
+                    "film_stock": "Ilford HP5, Kodak Tri-X",
+                    "grain": "Fine to medium, optimized for large format",
+                    "camera": "Leica M-series or Hasselblad 500C",
+                    "lens": "24mm to 100mm, preferred 35mm and 50mm",
+                    "exposure": "Correct to slightly overexposed, poetic light",
+                    "tonality": "Moderate-high contrast, many grey tones, romantic"
+                },
+                "composition": {
+                    "lighting": "Soft diffuse light, golden hour, overcast, ethereal",
+                    "perspective": "Human-scale respectful, often aerial for scale",
+                    "depth": "Continuously focused, context visible everywhere",
+                    "negative_space": "Generous and breathing, structured with light"
+                }
+            }
+        };
+
+        // GENERATORS DATABASE
+        const generators = {
+            "dalle": { name: "DALL-E 3", description: "Realistic photography, excellent prompt understanding", icon: "🎨" },
+            "midjourney": { name: "Midjourney", description: "Cinematic quality, fine details, artistic interpretation", icon: "🎬" },
+            "stable-diffusion": { name: "Stable Diffusion 3", description: "Open source, flexible, local deployment", icon: "⚙️" },
+            "nano-banana-pro": { name: "Nano Banana Pro", description: "Fast generation, concise prompts, real-time", icon: "⚡" },
+            "nano-banana-2": { name: "Nano Banana 2", description: "Improved quality, technical control, focused", icon: "🎯" }
+        };
+
+        // EXAMPLES
+        const examples = [
+            {
+                title: "Koudelka Street",
+                photographer: "koudelka",
+                subject: "Man walking through a decrepit industrial area, harsh midday light creating stark shadows",
+                generator: "midjourney",
+                mood: "",
+                style: ""
+            },
+            {
+                title: "Salgado Landscape",
+                photographer: "salgado",
+                subject: "Workers in a gold mine, exhausted but dignified, golden light filtering through dust",
+                generator: "dalle",
+                mood: "",
+                style: ""
+            },
+            {
+                title: "Koudelka Portrait",
+                photographer: "koudelka",
+                subject: "Woman in abandoned factory, standing against broken windows, extreme contrast",
+                generator: "stable-diffusion",
+                mood: "melancholic",
+                style: "film noir"
+            },
+            {
+                title: "Salgado Humanist",
+                photographer: "salgado",
+                subject: "Family gathered around a field after harvest, soft evening light, multiple generations",
+                generator: "midjourney",
+                mood: "hopeful",
+                style: "monumental scale"
+            }
+        ];
+
+        // INITIALIZE
+        function init() {
+            populateSelects();
+            generateExamples();
+            updateFingerprint();
+        }
+
+        function populateSelects() {
+            const photSelect = document.getElementById('photographer');
+            const genSelect = document.getElementById('generator');
+
+            Object.entries(photographers).forEach(([id, data]) => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = data.name;
+                photSelect.appendChild(opt);
+            });
+
+            Object.entries(generators).forEach(([id, data]) => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = `${data.icon} ${data.name}`;
+                genSelect.appendChild(opt);
+            });
+        }
+
+        function updateFingerprint() {
+            const photId = document.getElementById('photographer').value;
+            const preview = document.getElementById('fingerprint');
+
+            if (!photId) {
+                preview.textContent = '← Select a photographer to see their fingerprint';
+                return;
+            }
+
+            const phot = photographers[photId];
+            preview.textContent = phot.fingerprint_short;
+        }
+
+        function generatePrompt() {
+            const photId = document.getElementById('photographer').value;
+            const subject = document.getElementById('subject').value;
+            const genId = document.getElementById('generator').value;
+            const mood = document.getElementById('mood').value;
+            const style = document.getElementById('style').value;
+
+            if (!photId || !subject || !genId) {
+                alert('Please fill in: Photographer, Scene, and Generator');
+                return;
+            }
+
+            const prompt = buildPrompt(photId, subject, genId, mood, style);
+
+            document.getElementById('promptOutput').textContent = prompt;
+            document.getElementById('metaPhotographer').textContent = photographers[photId].name;
+            document.getElementById('metaGenerator').textContent = generators[genId].name;
+        }
+
+        function buildPrompt(photId, subject, genId, mood, style) {
+            const phot = photographers[photId];
+
+            const technicalParts = [
+                phot.technical.color_language,
+                phot.technical.grain,
+                phot.technical.tonality
+            ];
+
+            const compositionParts = [
+                phot.composition.lighting,
+                phot.composition.perspective
+            ];
+
+            const emotionalTone = mood || phot.emotional_palette.slice(0, 3).join(', ');
+            const characteristics = phot.characteristics.slice(0, 3).join(', ');
+
+            let prompt;
+
+            if (genId === 'midjourney') {
+                prompt = `${subject}, inspired by ${phot.name}.
+
+Technical: ${technicalParts.slice(0, 2).join('. ')}.
+Composition: ${compositionParts.join(', ')}.
+Signature style: ${characteristics}.
+Emotional tone: ${emotionalTone}.
+
+Film: ${phot.technical.film_stock}.
+Perspective: ${phot.technical.lens}.
+Negative space: ${phot.composition.negative_space}.
+
+${style}
+
+--style raw --ar 16:9`;
+            } else if (['nano-banana-pro', 'nano-banana-2'].includes(genId)) {
+                prompt = `${phot.name} style: ${subject}. ${characteristics}. ${phot.technical.color_language}. ${phot.composition.lighting}. ${emotionalTone}. ${style}`.trim();
+            } else {
+                prompt = `A photograph of ${subject}, inspired by ${phot.name}.
+
+Technical characteristics:
+- ${phot.technical.color_language}
+- ${phot.technical.film_stock}
+- Grain: ${phot.technical.grain}
+
+Composition:
+- ${phot.composition.lighting}
+- ${phot.composition.perspective}
+- ${phot.composition.depth}
+
+Signature: ${characteristics}
+Emotional tone: ${emotionalTone}
+
+${style}`;
+            }
+
+            return prompt.trim();
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('promptOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy to Clipboard';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function generateExamples() {
+            const grid = document.getElementById('examplesGrid');
+            examples.forEach(ex => {
+                const btn = document.createElement('button');
+                btn.className = 'example-btn';
+                btn.innerHTML = `
+                    <div class="example-btn-title">${ex.title}</div>
+                    <div class="example-btn-desc">${photographers[ex.photographer].name} + ${generators[ex.generator].name}</div>
+                `;
+                btn.onclick = () => loadExample(ex);
+                grid.appendChild(btn);
+            });
+        }
+
+        function loadExample(ex) {
+            document.getElementById('photographer').value = ex.photographer;
+            document.getElementById('subject').value = ex.subject;
+            document.getElementById('mood').value = ex.mood;
+            document.getElementById('style').value = ex.style;
+            document.getElementById('generator').value = ex.generator;
+            updateFingerprint();
+            generatePrompt();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Init on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
