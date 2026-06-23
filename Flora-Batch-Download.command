@@ -216,25 +216,42 @@ while true; do
 done
 echo -e "  ${GREEN}$NODE_COUNT${NC} Bilder aus Canvas-Nodes"
 
-# 2) Generations abfragen (für nicht-Canvas-Projekte oder als Ergänzung)
+# 2) Generations abfragen (über Workspace-Ebene, da project_id-Filter bei Canvas-Projekten nicht funktioniert)
+echo "  Lade Generations (alle Iterationen)..."
 GEN_COUNT=0
-RESPONSE=$(curl -s "$API_BASE/generations?project_id=$PROJECT_ID&status=completed&limit=100" \
-  -H "Authorization: Bearer $FLORA_API_KEY")
-
-if ! echo "$RESPONSE" | jq -e '.error' &>/dev/null 2>&1; then
-  GEN_ENTRIES=$(echo "$RESPONSE" | jq -c '[.generations[]? | select(.outputs != null) | {run_id, outputs: [.outputs[] | select(.type == "imageUrl")]} | select(.outputs | length > 0)]' 2>/dev/null)
-  GEN_COUNT=$(echo "$GEN_ENTRIES" | jq 'length' 2>/dev/null)
-  GEN_COUNT=${GEN_COUNT:-0}
-
-  if [ "$GEN_COUNT" -gt 0 ]; then
-    for i in $(seq 0 $((GEN_COUNT - 1))); do
-      GEN_ID=$(echo "$GEN_ENTRIES" | jq -r ".[$i].run_id")
-      GEN_URL=$(echo "$GEN_ENTRIES" | jq -r ".[$i].outputs[0].url")
-      echo -e "${GEN_ID}\t${GEN_URL}" >> "$ENTRIES_FILE"
-    done
+GEN_CURSOR=""
+while true; do
+  if [ -n "$GEN_CURSOR" ]; then
+    GEN_RESPONSE=$(curl -s "$API_BASE/generations?workspace_id=$WORKSPACE_ID&status=completed&limit=100&cursor=$GEN_CURSOR" \
+      -H "Authorization: Bearer $FLORA_API_KEY")
+  else
+    GEN_RESPONSE=$(curl -s "$API_BASE/generations?workspace_id=$WORKSPACE_ID&status=completed&limit=100" \
+      -H "Authorization: Bearer $FLORA_API_KEY")
   fi
-  echo -e "  ${GREEN}$GEN_COUNT${NC} Bilder aus Generations"
-fi
+
+  if echo "$GEN_RESPONSE" | jq -e '.error' &>/dev/null 2>&1; then
+    break
+  fi
+
+  # Nur Generations für das gewählte Projekt filtern, mit imageUrl-Outputs
+  BATCH_ENTRIES=$(echo "$GEN_RESPONSE" | jq -c --arg pid "$PROJECT_ID" \
+    '[.generations[]? | select(.project_id == $pid and .outputs != null) | {run_id} + (.outputs[]? | select(.type == "imageUrl")) | {id: .run_id, url: .url}]' 2>/dev/null)
+
+  if [ -n "$BATCH_ENTRIES" ] && [ "$BATCH_ENTRIES" != "null" ] && [ "$BATCH_ENTRIES" != "[]" ]; then
+    BATCH_COUNT=$(echo "$BATCH_ENTRIES" | jq 'length')
+    echo "$BATCH_ENTRIES" | jq -r '.[] | .id + "\t" + .url' >> "$ENTRIES_FILE"
+    GEN_COUNT=$((GEN_COUNT + BATCH_COUNT))
+  fi
+
+  GEN_CURSOR=$(echo "$GEN_RESPONSE" | jq -r '.meta.next_cursor // empty' 2>/dev/null)
+  if [ -z "$GEN_CURSOR" ] || [ "$GEN_CURSOR" == "null" ]; then
+    break
+  fi
+
+  # Fortschritt anzeigen
+  echo -ne "\r  ${GREEN}$GEN_COUNT${NC} Generations gefunden..."
+done
+echo -e "\r  ${GREEN}$GEN_COUNT${NC} Bilder aus Generations        "
 
 TOTAL=$(wc -l < "$ENTRIES_FILE" | tr -d ' ')
 
