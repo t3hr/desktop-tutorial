@@ -17,6 +17,27 @@ import http.server, webbrowser, urllib.request, urllib.parse, ssl
 from pathlib import Path
 from datetime import datetime
 
+# ─── SSL Setup ───────────────────────────────────────────────
+# macOS-Python findet oft die CA-Root-Zertifikate nicht
+# (CERTIFICATE_VERIFY_FAILED). certifi liefert ein zuverlaessiges
+# CA-Bundle; bei Bedarf wird es automatisch installiert.
+def _setup_ssl():
+    try:
+        import certifi
+    except ImportError:
+        try:
+            subprocess.run([sys.executable, "-m", "pip", "install", "--quiet",
+                            "--user", "certifi"], check=True)
+            import certifi
+        except Exception:
+            print("\033[1;33mHinweis: certifi konnte nicht installiert werden, "
+                  "nutze System-Zertifikate.\033[0m")
+            return
+    ctx = ssl.create_default_context(cafile=certifi.where())
+    ssl._create_default_https_context = lambda *a, **k: ctx
+
+_setup_ssl()
+
 # ─── Config ──────────────────────────────────────────────────
 MCP_ENDPOINT = "https://mcp.magnific.com"
 OAUTH_DISCOVERY = f"{MCP_ENDPOINT}/.well-known/oauth-authorization-server"
