@@ -547,23 +547,33 @@ class MCP:
 
 # ─── Response Parser ─────────────────────────────────────────
 def parse_items(text):
+    # Magnific liefert TOON-Tabellen:
+    #   items[25]{identifier,prompt,tool}:
+    #     mC0vwGRhJQ,"prompt mit, kommas",text-to-image
+    #     ...
+    #   pagination:
+    #     ...
+    # CSV-Parsing, weil Prompts Kommas enthalten (in Quotes geschuetzt).
+    import csv
     items = []
-    current = None
+    cols = None
+    in_items = False
     for line in text.split("\n"):
-        stripped = line.strip()
-        if stripped.startswith("- "):
-            if current is not None:
-                items.append(current)
-            current = {}
-            stripped = stripped[2:]
-        if current is None:
-            continue
-        m = re.match(r'(\w[\w.]*)\s*:\s*(.+)', stripped)
+        m = re.match(r'\s*items\[\d+\]\{([^}]*)\}\s*:\s*$', line)
         if m:
-            k, v = m.group(1), m.group(2).strip().strip('"')
-            current[k] = v
-    if current:
-        items.append(current)
+            cols = [c.strip() for c in m.group(1).split(",")]
+            in_items = True
+            continue
+        if in_items:
+            if line.startswith("  ") and line.strip():
+                try:
+                    fields = next(csv.reader([line.strip()]))
+                except Exception:
+                    continue
+                items.append({cols[i]: (fields[i] if i < len(fields) else "")
+                              for i in range(len(cols))})
+            else:
+                in_items = False
     return items
 
 def parse_single(text):
@@ -697,8 +707,6 @@ def download_folder(mcp, path, ref, out, fmt, history):
             dl += 1
             time.sleep(0.3)
 
-        if len(items) < 20:
-            break
         page += 1
 
     if dl > 0 or skip > 0:
