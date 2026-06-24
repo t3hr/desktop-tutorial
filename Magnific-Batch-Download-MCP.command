@@ -778,7 +778,44 @@ def main():
         print(f"  {i}) {indent}{name}")
 
     print()
-    choice = input("Welchen Ordner? [0 = alle]: ").strip() or "0"
+    print(f"{C}Tipp: Nummer eingeben ODER Ordnernamen (Teil davon) tippen zum Suchen.{N}")
+
+    def resolve_choice():
+        while True:
+            raw = input("Welchen Ordner? [0 = alle, Name oder Nr.]: ").strip()
+            if raw == "" or raw == "0":
+                return "ALL"
+            if raw.isdigit():
+                idx = int(raw) - 1
+                if 0 <= idx < len(paths):
+                    return paths[idx]
+                print(f"  {R}Ungueltige Nummer.{N}")
+                continue
+            q = raw.lower()
+            matches = [p for p in paths if q in p.lower()]
+            if not matches:
+                print(f"  {R}Kein Ordner enthaelt '{raw}'.{N}")
+                continue
+            if len(matches) == 1:
+                return matches[0]
+            print(f"  {Y}{len(matches)} Treffer:{N}")
+            for i, p in enumerate(matches, 1):
+                print(f"    {i}) {p}")
+            sub = input("  Welcher? [Nr.]: ").strip()
+            if sub.isdigit() and 1 <= int(sub) <= len(matches):
+                return matches[int(sub) - 1]
+            print(f"  {R}Ungueltig.{N}")
+
+    base = resolve_choice()
+
+    # Rekursiv: gewaehlter Ordner + alle Unterordner
+    if base == "ALL":
+        targets = paths
+        selected = f"ALLE ({len(paths)} Ordner)"
+    else:
+        subs = [p for p in paths if p.startswith(base + "/")]
+        targets = [base] + subs
+        selected = f"{base}  (+ {len(subs)} Unterordner)" if subs else base
 
     # Output dir
     print()
@@ -804,7 +841,6 @@ def main():
     print("  3) Beide (JPG + PNG)")
     fmt = input("Auswahl [2]: ").strip() or "2"
 
-    selected = f"ALLE ({len(paths)} Ordner)" if choice == "0" else paths[int(choice) - 1]
     fmt_name = {"1": "JPG", "2": "PNG", "3": "JPG + PNG"}.get(fmt, "PNG")
 
     print()
@@ -818,16 +854,7 @@ def main():
     history = load_history()
     total_dl = total_skip = 0
 
-    if choice == "0":
-        for p in paths:
-            print(f"{B}>> {p}{N}")
-            d, s = download_folder(mcp, p, FOLDERS[p], out, fmt, history)
-            total_dl += d
-            total_skip += s
-            print()
-    else:
-        idx = int(choice) - 1
-        p = paths[idx]
+    for p in targets:
         print(f"{B}>> {p}{N}")
         d, s = download_folder(mcp, p, FOLDERS[p], out, fmt, history)
         total_dl += d
