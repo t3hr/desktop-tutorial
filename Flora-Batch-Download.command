@@ -183,7 +183,8 @@ echo -e "Projekttyp: ${CYAN}${PROJECT_ORIGIN}${NC}"
 
 # --- Prompts aus Text-Nodes sammeln ---
 echo "Lade Prompts und Bilder von Flora..."
-PROMPTS_FILE=$(mktemp)
+PROMPTS_JSON=$(mktemp)
+echo "[]" > "$PROMPTS_JSON"
 PROMPT_CURSOR=""
 PROMPT_COUNT=0
 while true; do
@@ -195,10 +196,14 @@ while true; do
       -H "Authorization: Bearer $FLORA_API_KEY")
   fi
 
-  # Text-Nodes extrahieren (url enthält den Prompt-Text)
-  echo "$PROMPT_RESPONSE" | jq -r '.nodes[]? | select(.type == "text" and .url != null) | .url' 2>/dev/null >> "$PROMPTS_FILE"
-  BATCH_P=$(echo "$PROMPT_RESPONSE" | jq '[.nodes[]? | select(.type == "text" and .url != null)] | length' 2>/dev/null)
-  PROMPT_COUNT=$((PROMPT_COUNT + ${BATCH_P:-0}))
+  # Text-Nodes als JSON-Array sammeln (url enthält den Prompt-Text)
+  NEW_PROMPTS=$(echo "$PROMPT_RESPONSE" | jq -c '[.nodes[]? | select(.type == "text" and .url != null) | .url]' 2>/dev/null)
+  if [ -n "$NEW_PROMPTS" ] && [ "$NEW_PROMPTS" != "[]" ]; then
+    MERGED=$(jq -s '.[0] + .[1]' "$PROMPTS_JSON" <(echo "$NEW_PROMPTS"))
+    echo "$MERGED" > "$PROMPTS_JSON"
+    BATCH_P=$(echo "$NEW_PROMPTS" | jq 'length')
+    PROMPT_COUNT=$((PROMPT_COUNT + ${BATCH_P:-0}))
+  fi
 
   PROMPT_CURSOR=$(echo "$PROMPT_RESPONSE" | jq -r '.meta.next_cursor // empty' 2>/dev/null)
   if [ -z "$PROMPT_CURSOR" ] || [ "$PROMPT_CURSOR" == "null" ]; then
@@ -306,39 +311,43 @@ echo -e "  ${GREEN}$TOTAL${NC} einzigartige Bilder (${DUPES} Duplikate entfernt)
 echo ""
 
 # --- Prompts-Datei vorbereiten ---
-# Einzigartige Prompts sammeln (Leerzeilen und Duplikate entfernen)
-UNIQUE_PROMPTS_FILE=$(mktemp)
-if [ -s "$PROMPTS_FILE" ]; then
-  # Prompts durch Trennlinie separieren, Duplikate entfernen
-  awk 'NF' "$PROMPTS_FILE" | sort -u > "$UNIQUE_PROMPTS_FILE"
-  UNIQUE_PROMPT_COUNT=$(wc -l < "$UNIQUE_PROMPTS_FILE" | tr -d ' ')
+UNIQUE_PROMPTS_JSON=$(mktemp)
+UNIQUE_PROMPT_COUNT=0
+if [ -s "$PROMPTS_JSON" ]; then
+  # Einzigartige Prompts (JSON-Strings deduplizieren)
+  jq '[. | unique | .[] | select(length > 20)]' "$PROMPTS_JSON" > "$UNIQUE_PROMPTS_JSON" 2>/dev/null
+  UNIQUE_PROMPT_COUNT=$(jq 'length' "$UNIQUE_PROMPTS_JSON" 2>/dev/null)
+  UNIQUE_PROMPT_COUNT=${UNIQUE_PROMPT_COUNT:-0}
   echo -e "  ${GREEN}$UNIQUE_PROMPT_COUNT${NC} einzigartige Prompts gesammelt"
 
-  # Prompts als Sidecar-Datei speichern
-  PROMPTS_SIDECAR="$OUTPUT_DIR/${PROJECT_NAME}_prompts.txt"
-  {
-    echo "# Flora Projekt: $SELECTED_NAME"
-    echo "# Projekt-ID: $PROJECT_ID"
-    echo "# Exportiert: $(date '+%Y-%m-%d %H:%M')"
-    echo "# $UNIQUE_PROMPT_COUNT einzigartige Prompts"
-    echo ""
-    IDX=0
-    while IFS= read -r PROMPT_LINE; do
-      IDX=$((IDX + 1))
-      echo "--- Prompt $IDX ---"
-      echo "$PROMPT_LINE"
+  if [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
+    # Prompts als Sidecar-Datei speichern
+    PROMPTS_SIDECAR="$OUTPUT_DIR/${PROJECT_NAME}_prompts.txt"
+    {
+      echo "# Flora Projekt: $SELECTED_NAME"
+      echo "# Projekt-ID: $PROJECT_ID"
+      echo "# Exportiert: $(date '+%Y-%m-%d %H:%M')"
+      echo "# $UNIQUE_PROMPT_COUNT einzigartige Prompts"
       echo ""
-    done < "$UNIQUE_PROMPTS_FILE"
-  } > "$PROMPTS_SIDECAR"
-  echo -e "  ${GREEN}✓${NC} Prompts gespeichert: $(basename "$PROMPTS_SIDECAR")"
-else
-  UNIQUE_PROMPT_COUNT=0
+      for IDX in $(seq 0 $((UNIQUE_PROMPT_COUNT - 1))); do
+        echo "--- Prompt $((IDX + 1)) ---"
+        jq -r ".[$IDX]" "$UNIQUE_PROMPTS_JSON"
+        echo ""
+      done
+    } > "$PROMPTS_SIDECAR"
+    echo -e "  ${GREEN}✓${NC} Prompts gespeichert: $(basename "$PROMPTS_SIDECAR")"
+  fi
 fi
 
-# Bei genau 1 Prompt → wird direkt als EXIF-Beschreibung geschrieben
-SINGLE_PROMPT=""
-if [ "$UNIQUE_PROMPT_COUNT" -eq 1 ]; then
-  SINGLE_PROMPT=$(cat "$UNIQUE_PROMPTS_FILE")
+# Alle Prompts als EXIF-Beschreibung vorbereiten
+ALL_PROMPTS_EXIF=""
+if [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
+  if [ "$UNIQUE_PROMPT_COUNT" -eq 1 ]; then
+    ALL_PROMPTS_EXIF=$(jq -r '.[0]' "$UNIQUE_PROMPTS_JSON")
+  else
+    # Alle Prompts mit Trennzeichen zusammenfassen (Newlines durch Leerzeichen ersetzen)
+    ALL_PROMPTS_EXIF=$(jq -r '[.[] | gsub("\n+"; " ")] | join(" ||| ")' "$UNIQUE_PROMPTS_JSON")
+  fi
 fi
 
 echo ""
@@ -389,22 +398,15 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
   fi
 
   # EXIF/IPTC schreiben (Lightroom-kompatibel)
-  EXIF_DESC=""
-  if [ -n "$SINGLE_PROMPT" ]; then
-    EXIF_DESC="$SINGLE_PROMPT"
-  elif [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
-    EXIF_DESC="Flora Projekt: $SELECTED_NAME | Siehe ${PROJECT_NAME}_prompts.txt für alle Prompts"
-  fi
-
   MODEL_INFO="${MODEL:-unknown}"
 
   for F in "$OUTPUT_DIR/${BASE}.jpg" "$OUTPUT_DIR/${BASE}.png"; do
     if [ -f "$F" ]; then
-      if [ -n "$EXIF_DESC" ]; then
+      if [ -n "$ALL_PROMPTS_EXIF" ]; then
         exiftool \
-          -ImageDescription="$EXIF_DESC" \
-          -Caption-Abstract="$EXIF_DESC" \
-          -Description="$EXIF_DESC" \
+          -ImageDescription="$ALL_PROMPTS_EXIF" \
+          -Caption-Abstract="$ALL_PROMPTS_EXIF" \
+          -Description="$ALL_PROMPTS_EXIF" \
           -Title="${PROJECT_NAME} ${NUM}" \
           -ObjectName="${PROJECT_NAME} ${NUM}" \
           -Software="Flora AI ($MODEL_INFO)" \
@@ -424,7 +426,7 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
 
 done < "$ENTRIES_FILE"
 
-rm -f "$ENTRIES_FILE" "$PROMPTS_FILE" "$UNIQUE_PROMPTS_FILE"
+rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$UNIQUE_PROMPTS_JSON"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
