@@ -340,15 +340,8 @@ if [ -s "$PROMPTS_JSON" ]; then
 fi
 
 # Alle Prompts als EXIF-Beschreibung vorbereiten
-ALL_PROMPTS_EXIF=""
-if [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
-  if [ "$UNIQUE_PROMPT_COUNT" -eq 1 ]; then
-    ALL_PROMPTS_EXIF=$(jq -r '.[0]' "$UNIQUE_PROMPTS_JSON")
-  else
-    # Alle Prompts mit Trennzeichen zusammenfassen (Newlines durch Leerzeichen ersetzen)
-    ALL_PROMPTS_EXIF=$(jq -r '[.[] | gsub("\n+"; " ")] | join(" ||| ")' "$UNIQUE_PROMPTS_JSON")
-  fi
-fi
+# Hinweis: Die Flora API erlaubt keine 1:1 Zuordnung von Prompt zu Bild.
+# Prompts werden nur in der Sidecar-Datei gespeichert.
 
 echo ""
 
@@ -402,22 +395,11 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
 
   for F in "$OUTPUT_DIR/${BASE}.jpg" "$OUTPUT_DIR/${BASE}.png"; do
     if [ -f "$F" ]; then
-      if [ -n "$ALL_PROMPTS_EXIF" ]; then
-        exiftool \
-          -ImageDescription="$ALL_PROMPTS_EXIF" \
-          -Caption-Abstract="$ALL_PROMPTS_EXIF" \
-          -Description="$ALL_PROMPTS_EXIF" \
-          -Title="${PROJECT_NAME} ${NUM}" \
-          -ObjectName="${PROJECT_NAME} ${NUM}" \
-          -Software="Flora AI ($MODEL_INFO)" \
-          -overwrite_original "$F" >/dev/null 2>&1
-      else
-        exiftool \
-          -Title="${PROJECT_NAME} ${NUM}" \
-          -ObjectName="${PROJECT_NAME} ${NUM}" \
-          -Software="Flora AI ($MODEL_INFO)" \
-          -overwrite_original "$F" >/dev/null 2>&1
-      fi
+      exiftool \
+        -Title="${PROJECT_NAME} ${NUM}" \
+        -ObjectName="${PROJECT_NAME} ${NUM}" \
+        -Software="Flora AI ($MODEL_INFO)" \
+        -overwrite_original "$F" >/dev/null 2>&1
     fi
   done
 
