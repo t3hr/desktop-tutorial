@@ -249,6 +249,8 @@ echo -e "  ${GREEN}$NODE_COUNT${NC} Bilder aus Canvas-Nodes"
 echo "  Lade Generations (alle Iterationen)..."
 GEN_COUNT=0
 GEN_CURSOR=""
+GEN_PROMPTS_FILE=$(mktemp)
+GEN_TEXT_COUNT=0
 while true; do
   if [ -n "$GEN_CURSOR" ]; then
     GEN_RESPONSE=$(curl -s "$API_BASE/generations?workspace_id=$WORKSPACE_ID&status=completed&limit=100&cursor=$GEN_CURSOR" \
@@ -272,6 +274,15 @@ while true; do
     GEN_COUNT=$((GEN_COUNT + BATCH_COUNT))
   fi
 
+  # Text-Outputs sammeln (nummerierte Prompts: "1. ...", "2. ...", etc.)
+  BATCH_TEXTS=$(echo "$GEN_RESPONSE" | jq -r --arg pid "$PROJECT_ID" \
+    '.generations[]? | select(.project_id == $pid and .outputs != null) | .outputs[]? | select(.type == "text") | .url // empty' 2>/dev/null)
+  if [ -n "$BATCH_TEXTS" ]; then
+    echo "$BATCH_TEXTS" >> "$GEN_PROMPTS_FILE"
+    BATCH_TEXT_COUNT=$(echo "$BATCH_TEXTS" | wc -l | tr -d ' ')
+    GEN_TEXT_COUNT=$((GEN_TEXT_COUNT + BATCH_TEXT_COUNT))
+  fi
+
   GEN_CURSOR=$(echo "$GEN_RESPONSE" | jq -r '.meta.next_cursor // empty' 2>/dev/null)
   if [ -z "$GEN_CURSOR" ] || [ "$GEN_CURSOR" == "null" ]; then
     break
@@ -280,6 +291,14 @@ while true; do
   echo -ne "\r  ${GREEN}$GEN_COUNT${NC} Generations gefunden..."
 done
 echo -e "\r  ${GREEN}$GEN_COUNT${NC} Bilder aus Generations        "
+
+# Doppelte Prompts entfernen und sortieren
+SORTED_PROMPTS_FILE=$(mktemp)
+if [ -s "$GEN_PROMPTS_FILE" ]; then
+  sort -u "$GEN_PROMPTS_FILE" | sort -t'.' -k1 -n > "$SORTED_PROMPTS_FILE"
+  GEN_TEXT_COUNT=$(wc -l < "$SORTED_PROMPTS_FILE" | tr -d ' ')
+fi
+echo -e "  ${GREEN}$GEN_TEXT_COUNT${NC} Prompts aus Generations"
 
 # --- URL-Deduplizierung ---
 DEDUP_FILE=$(mktemp)
@@ -339,9 +358,6 @@ if [ -s "$PROMPTS_JSON" ]; then
   fi
 fi
 
-# Alle Prompts als EXIF-Beschreibung vorbereiten
-# Hinweis: Die Flora API erlaubt keine 1:1 Zuordnung von Prompt zu Bild.
-# Prompts werden nur in der Sidecar-Datei gespeichert.
 
 echo ""
 
@@ -393,13 +409,31 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
   # EXIF/IPTC schreiben (Lightroom-kompatibel)
   MODEL_INFO="${MODEL:-unknown}"
 
+  # Prompt suchen (rotiert durch nummerierte Prompts)
+  PROMPT=""
+  if [ -s "$SORTED_PROMPTS_FILE" ] && [ "$GEN_TEXT_COUNT" -gt 0 ]; then
+    PROMPT_NUM=$(( ((DOWNLOAD_COUNT - 1) % GEN_TEXT_COUNT) + 1 ))
+    PROMPT=$(grep -E "^${PROMPT_NUM}\. " "$SORTED_PROMPTS_FILE" | head -1 | sed 's/^[0-9]*\. //')
+  fi
+
   for F in "$OUTPUT_DIR/${BASE}.jpg" "$OUTPUT_DIR/${BASE}.png"; do
     if [ -f "$F" ]; then
-      exiftool \
-        -Title="${PROJECT_NAME} ${NUM}" \
-        -ObjectName="${PROJECT_NAME} ${NUM}" \
-        -Software="Flora AI ($MODEL_INFO)" \
-        -overwrite_original "$F" >/dev/null 2>&1
+      if [ -n "$PROMPT" ]; then
+        exiftool \
+          -ImageDescription="$PROMPT" \
+          -Caption-Abstract="$PROMPT" \
+          -Description="$PROMPT" \
+          -Title="${PROJECT_NAME} ${NUM}" \
+          -ObjectName="${PROJECT_NAME} ${NUM}" \
+          -Software="Flora AI ($MODEL_INFO)" \
+          -overwrite_original "$F" >/dev/null 2>&1
+      else
+        exiftool \
+          -Title="${PROJECT_NAME} ${NUM}" \
+          -ObjectName="${PROJECT_NAME} ${NUM}" \
+          -Software="Flora AI ($MODEL_INFO)" \
+          -overwrite_original "$F" >/dev/null 2>&1
+      fi
     fi
   done
 
@@ -408,7 +442,7 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
 
 done < "$ENTRIES_FILE"
 
-rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$UNIQUE_PROMPTS_JSON"
+rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$UNIQUE_PROMPTS_JSON" "$GEN_PROMPTS_FILE" "$SORTED_PROMPTS_FILE"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
