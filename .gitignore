@@ -1,3 +1,5 @@
 magnific-downloads/
 flora-downloads/
 *.DS_Store
+__pycache__/
+*.pyc
