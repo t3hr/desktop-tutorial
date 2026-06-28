@@ -74,7 +74,7 @@ Wenn der User einen Ordner nennt, schlage hier die Reference nach und rufe `crea
 
 | Ordner | Reference |
 |---|---|
-| Personal/__references | `1ea0763c-67ce-46fd-91cd-f64118c43978` |
+| Personal/____SORT | `aca98a54-4bed-4738-b0dd-6bca35f379eb` |
 | Personal/_download | `3b979565-87d5-4f4b-9733-6be243123388` |
 | Personal/_fotografie | `ef128f18-d7b6-4e3d-8697-35bac8ea82a4` |
 | Personal/_fotografie/android | `e0a575ba-0908-4a9e-88e2-ebd5430c7602` |
@@ -125,7 +125,6 @@ Wenn der User einen Ordner nennt, schlage hier die Reference nach und rufe `crea
 | Personal/automotive/_series/white dirt studio | `e4b0c2cc-69ef-4d8d-9a13-456937719326` |
 | Personal/automotive/_series/white studio | `08388b57-2bd3-4e47-ad98-6cb72f2c27dc` |
 | Personal/_download/_optimiert | `9850c3ad-9bae-4bb0-8d1d-77a7c3e6e4f8` |
-| Personal/_download/SORT | `f6662c0d-b8b1-4805-8ff3-8703ca33a8cf` |
 | Personal/_Illustration/_Styles/automotive style | `53b02215-d75f-4a8f-967e-40813046aae5` |
 | Personal/_Illustration/_Styles/blueprint style | `81cdfd9c-a85a-4d68-a0f5-8f7e9ef07321` |
 | Personal/_Illustration/_Styles/motorcycle style | `f9c4876c-49b1-4704-aa2b-9d8b9aaa1cdb` |
@@ -144,14 +143,11 @@ Wenn der User einen Ordner nennt, schlage hier die Reference nach und rufe `crea
 |---|---|
 | archiv/fotografie | `1e63c931-e8e7-4569-adad-e278dae7b235` |
 | archiv/fotografie/android | `5d1df394-783e-41e6-bef3-0ec1ff755d6d` |
-| archiv/fotografie/animals | `6c1f0604-bb52-449d-91a5-cd292038c098` |
-| archiv/fotografie/architecture | `2edfd10b-d853-49ec-8571-9ce039170bb2` |
 | archiv/fotografie/automotive | `5f16c19d-9447-4f07-9cb1-54872fefcd3d` |
 | archiv/fotografie/objects | `38013c03-1e0b-4d8b-9ad0-db4cf52a15e6` |
 | archiv/fotografie/people | `22b7b31e-f2b5-41bf-8e08-b4f6e8a6152a` |
 | archiv/fotografie/surreal | `663b54d1-1953-43f5-b1d8-b3590fe13aad` |
 | archiv/illustration | `25501dde-f919-4a43-860a-23f45b8b8e76` |
-| archiv/illustration/animals | `d6da71a7-067e-4f79-bccc-fcfebd980aa4` |
 | archiv/illustration/architecture | `98485d8e-42ef-44b2-9c5c-81a6f85f8160` |
 | archiv/illustration/automotive | `8f2cd122-2975-4c28-99e5-093ec44e6bfd` |
 | archiv/illustration/graphic design | `e3703a82-a309-4df6-a098-b2fccfeead64` |
