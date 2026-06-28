@@ -339,15 +339,21 @@ if [ -s "$PROMPTS_JSON" ]; then
   fi
 fi
 
-# Alle Prompts als EXIF-Beschreibung vorbereiten
-ALL_PROMPTS_EXIF=""
-if [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
-  if [ "$UNIQUE_PROMPT_COUNT" -eq 1 ]; then
-    ALL_PROMPTS_EXIF=$(jq -r '.[0]' "$UNIQUE_PROMPTS_JSON")
-  else
-    # Alle Prompts mit Trennzeichen zusammenfassen (Newlines durch Leerzeichen ersetzen)
-    ALL_PROMPTS_EXIF=$(jq -r '[.[] | gsub("\n+"; " ")] | join(" ||| ")' "$UNIQUE_PROMPTS_JSON")
-  fi
+# Nummerierte Prompts (1., 2., ...) fuer Per-Bild-Zuordnung extrahieren.
+# Pro Nummer den kuerzesten Treffer = der einzelne Prompt (nicht der Sammelblock).
+NUMBERED_FILE=$(mktemp)
+jq -r '
+  [ .[] | select(type=="string") | select(test("^[0-9]+\\.[[:space:]]"))
+        | {n:(capture("^(?<n>[0-9]+)\\.").n|tonumber), t:(gsub("\n+";" "))} ]
+  | group_by(.n) | map(min_by(.t|length)) | sort_by(.n)
+  | .[] | (.t | sub("^[0-9]+\\.[[:space:]]+";""))
+' "$PROMPTS_JSON" > "$NUMBERED_FILE" 2>/dev/null
+NPROMPTS=$(grep -c . "$NUMBERED_FILE" || true)
+[ -z "$NPROMPTS" ] && NPROMPTS=0
+if [ "$NPROMPTS" -gt 0 ]; then
+  echo -e "  ${GREEN}$NPROMPTS${NC} nummerierte Prompts fuer Per-Bild-Zuordnung"
+else
+  echo -e "  ${YELLOW}Keine nummerierten Prompts gefunden – Bilder erhalten keinen Prompt im EXIF.${NC}"
 fi
 
 echo ""
@@ -397,16 +403,23 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
     fi
   fi
 
+  # Per-Bild-Prompt zuordnen (rotiert durch die nummerierten Prompts, wie im Original)
+  PROMPT=""
+  if [ "$NPROMPTS" -gt 0 ]; then
+    PNUM=$(( (DOWNLOAD_COUNT - 1) % NPROMPTS + 1 ))
+    PROMPT=$(sed -n "${PNUM}p" "$NUMBERED_FILE")
+  fi
+
   # EXIF/IPTC schreiben (Lightroom-kompatibel)
   MODEL_INFO="${MODEL:-unknown}"
 
   for F in "$OUTPUT_DIR/${BASE}.jpg" "$OUTPUT_DIR/${BASE}.png"; do
     if [ -f "$F" ]; then
-      if [ -n "$ALL_PROMPTS_EXIF" ]; then
+      if [ -n "$PROMPT" ]; then
         exiftool \
-          -ImageDescription="$ALL_PROMPTS_EXIF" \
-          -Caption-Abstract="$ALL_PROMPTS_EXIF" \
-          -Description="$ALL_PROMPTS_EXIF" \
+          -ImageDescription="$PROMPT" \
+          -Caption-Abstract="$PROMPT" \
+          -Description="$PROMPT" \
           -Title="${PROJECT_NAME} ${NUM}" \
           -ObjectName="${PROJECT_NAME} ${NUM}" \
           -Software="Flora AI ($MODEL_INFO)" \
@@ -426,7 +439,7 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
 
 done < "$ENTRIES_FILE"
 
-rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$UNIQUE_PROMPTS_JSON"
+rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$UNIQUE_PROMPTS_JSON" "$NUMBERED_FILE"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
