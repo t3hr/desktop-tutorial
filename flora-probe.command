@@ -52,6 +52,19 @@ PNAME=$(echo "$PRJ" | jq -r ".projects[$((C - 1))].name")
   echo "=== /canvas  (Mermaid-Graph) ==="
   curl -s "$API_BASE/projects/$PID/canvas" -H "Authorization: Bearer $FLORA_API_KEY" \
     | jq -r '.summary, .diagram'
+  echo ""
+  echo "=== /assets?project_id  (asset_id, node_id, name, description) ==="
+  curl -s "$API_BASE/assets?project_id=$PID&limit=100" -H "Authorization: Bearer $FLORA_API_KEY" \
+    | jq '[.assets[] | {asset_id, node_id, content_type, name, description}]'
+  echo ""
+  echo "=== Einzel-Asset Detail (erstes image-Asset) ==="
+  FIRST_ASSET=$(curl -s "$API_BASE/projects/$PID/nodes?limit=100" -H "Authorization: Bearer $FLORA_API_KEY" \
+    | jq -r 'first(.nodes[] | select(.type=="image") | .asset_id) // empty')
+  if [ -n "$FIRST_ASSET" ]; then
+    echo "asset_id: $FIRST_ASSET"
+    curl -s "$API_BASE/assets/$FIRST_ASSET" -H "Authorization: Bearer $FLORA_API_KEY" \
+      | jq '{asset_id, name, description, uploaded_via, content_type}'
+  fi
 } | tee "$OUT"
 
 echo ""
