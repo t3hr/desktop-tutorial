@@ -372,7 +372,8 @@ SKIP_COUNT=0
 DOWNLOAD_COUNT=0
 URL_SKIP=0
 
-LAST_NUM=$(ls "$OUTPUT_DIR" 2>/dev/null | grep -oE '_([0-9]{3})\.' | grep -oE '[0-9]{3}' | sort -n | tail -1)
+# Nur Dateien DIESES Projekts zaehlen (Praefix), damit jedes Projekt bei 001 startet
+LAST_NUM=$(ls "$OUTPUT_DIR" 2>/dev/null | grep -F "_${PROJECT_NAME}_Flora_" | grep -oE '_([0-9]{3})\.' | grep -oE '[0-9]{3}' | sort -n | tail -1)
 COUNTER=${LAST_NUM:-0}
 COUNTER=$((10#$COUNTER))
 
