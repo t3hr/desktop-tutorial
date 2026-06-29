@@ -281,13 +281,20 @@ while true; do
 done
 echo -e "\r  ${GREEN}$GEN_COUNT${NC} Bilder aus Generations        "
 
-# --- URL-Deduplizierung ---
+# --- URL-Deduplizierung + Referenzbild-Filter ---
+# Generierte Bilder liegen unter .../node-inputs/...  Hochgeladene Referenzen
+# (uploaded_via=upload) haben KEIN /node-inputs/ im Pfad -> werden uebersprungen.
 DEDUP_FILE=$(mktemp)
 SEEN_URLS_FILE=$(mktemp)
 TOTAL_RAW=$(wc -l < "$ENTRIES_FILE" | tr -d ' ')
 DUPES=0
+REFSKIP=0
 while IFS=$'\t' read -r DID DURL DMODEL; do
   [ -z "$DURL" ] && continue
+  case "$DURL" in
+    *"/node-inputs/"*) : ;;                 # generiert -> behalten
+    *) REFSKIP=$((REFSKIP + 1)); continue ;; # Referenz/Upload -> ueberspringen
+  esac
   if grep -qF "$DURL" "$SEEN_URLS_FILE" 2>/dev/null; then
     DUPES=$((DUPES + 1))
     continue
@@ -307,39 +314,10 @@ if [ "$TOTAL" -eq 0 ]; then
   exit 0
 fi
 
-echo -e "  ${GREEN}$TOTAL${NC} einzigartige Bilder (${DUPES} Duplikate entfernt)"
+echo -e "  ${GREEN}$TOTAL${NC} generierte Bilder (${DUPES} Duplikate, ${REFSKIP} Referenzbilder uebersprungen)"
 echo ""
 
-# --- Prompts-Datei vorbereiten ---
-UNIQUE_PROMPTS_JSON=$(mktemp)
-UNIQUE_PROMPT_COUNT=0
-if [ -s "$PROMPTS_JSON" ]; then
-  # Einzigartige Prompts (JSON-Strings deduplizieren)
-  jq '[. | unique | .[] | select(length > 20)]' "$PROMPTS_JSON" > "$UNIQUE_PROMPTS_JSON" 2>/dev/null
-  UNIQUE_PROMPT_COUNT=$(jq 'length' "$UNIQUE_PROMPTS_JSON" 2>/dev/null)
-  UNIQUE_PROMPT_COUNT=${UNIQUE_PROMPT_COUNT:-0}
-  echo -e "  ${GREEN}$UNIQUE_PROMPT_COUNT${NC} einzigartige Prompts gesammelt"
-
-  if [ "$UNIQUE_PROMPT_COUNT" -gt 0 ]; then
-    # Prompts als Sidecar-Datei speichern
-    PROMPTS_SIDECAR="$OUTPUT_DIR/${PROJECT_NAME}_prompts.txt"
-    {
-      echo "# Flora Projekt: $SELECTED_NAME"
-      echo "# Projekt-ID: $PROJECT_ID"
-      echo "# Exportiert: $(date '+%Y-%m-%d %H:%M')"
-      echo "# $UNIQUE_PROMPT_COUNT einzigartige Prompts"
-      echo ""
-      for IDX in $(seq 0 $((UNIQUE_PROMPT_COUNT - 1))); do
-        echo "--- Prompt $((IDX + 1)) ---"
-        jq -r ".[$IDX]" "$UNIQUE_PROMPTS_JSON"
-        echo ""
-      done
-    } > "$PROMPTS_SIDECAR"
-    echo -e "  ${GREEN}✓${NC} Prompts gespeichert: $(basename "$PROMPTS_SIDECAR")"
-  fi
-fi
-
-# Nummerierte Prompts (1., 2., ...) fuer Per-Bild-Zuordnung extrahieren.
+# --- Nummerierte Prompts (1., 2., ...) extrahieren ---
 # Pro Nummer den kuerzesten Treffer = der einzelne Prompt (nicht der Sammelblock).
 NUMBERED_FILE=$(mktemp)
 jq -r '
@@ -350,10 +328,41 @@ jq -r '
 ' "$PROMPTS_JSON" > "$NUMBERED_FILE" 2>/dev/null
 NPROMPTS=$(grep -c . "$NUMBERED_FILE" || true)
 [ -z "$NPROMPTS" ] && NPROMPTS=0
+
+# Fallback: wenn keine nummerierten Prompts da sind, alle laengeren Texte nehmen
+if [ "$NPROMPTS" -eq 0 ] && [ -s "$PROMPTS_JSON" ]; then
+  jq -r '[ .[] | select(type=="string") | select(length > 20) | gsub("\n+";" ") ] | unique | .[]' \
+    "$PROMPTS_JSON" > "$NUMBERED_FILE" 2>/dev/null
+  NPROMPTS=$(grep -c . "$NUMBERED_FILE" || true)
+  [ -z "$NPROMPTS" ] && NPROMPTS=0
+fi
+
 if [ "$NPROMPTS" -gt 0 ]; then
-  echo -e "  ${GREEN}$NPROMPTS${NC} nummerierte Prompts fuer Per-Bild-Zuordnung"
+  echo -e "  ${GREEN}$NPROMPTS${NC} Prompts gesammelt (fuer Per-Bild-EXIF + Sidecar)"
+
+  # --- Sidecar-Datei mit allen Prompts ---
+  PROMPTS_SIDECAR="$OUTPUT_DIR/${PROJECT_NAME}_prompts.txt"
+  {
+    echo "# Flora Projekt: $SELECTED_NAME"
+    echo "# Projekt-ID: $PROJECT_ID"
+    echo "# Exportiert: $(date '+%Y-%m-%d %H:%M')"
+    echo "# $NPROMPTS Prompts"
+    echo "#"
+    echo "# Hinweis: Die EXIF-Zuordnung im Bild erfolgt positionsbasiert und"
+    echo "# kann bei komplexen Projekten verrutschen. Diese Liste ist die"
+    echo "# zuverlaessige Referenz."
+    echo ""
+    IDX=1
+    while IFS= read -r LINE; do
+      echo "--- Prompt $IDX ---"
+      echo "$LINE"
+      echo ""
+      IDX=$((IDX + 1))
+    done < "$NUMBERED_FILE"
+  } > "$PROMPTS_SIDECAR"
+  echo -e "  ${GREEN}✓${NC} Prompts gespeichert: $(basename "$PROMPTS_SIDECAR")"
 else
-  echo -e "  ${YELLOW}Keine nummerierten Prompts gefunden – Bilder erhalten keinen Prompt im EXIF.${NC}"
+  echo -e "  ${YELLOW}Keine Prompts gefunden – Bilder erhalten keinen Prompt im EXIF.${NC}"
 fi
 
 echo ""
@@ -439,7 +448,7 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
 
 done < "$ENTRIES_FILE"
 
-rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$UNIQUE_PROMPTS_JSON" "$NUMBERED_FILE"
+rm -f "$ENTRIES_FILE" "$PROMPTS_JSON" "$NUMBERED_FILE"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
