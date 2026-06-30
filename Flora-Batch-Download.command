@@ -147,17 +147,21 @@ DEFAULT_NAME=$(echo "$SELECTED_NAME" | sed 's/ /-/g')
 read -rp "Projektname für Dateinamen [$DEFAULT_NAME]: " PROJECT_NAME
 PROJECT_NAME="${PROJECT_NAME:-$DEFAULT_NAME}"
 
-# --- Zielordner per Finder-Dialog ---
+# --- Zielordner per Finder-Dialog (Basis) ---
 echo ""
-echo "Wähle den Speicherort im Finder-Dialog..."
-OUTPUT_DIR=$(osascript -e 'set chosenFolder to choose folder with prompt "Wo sollen die Bilder gespeichert werden?"' -e 'return POSIX path of chosenFolder' 2>/dev/null)
+echo "Wähle den Basis-Ordner im Finder-Dialog (Unterordner pro Projekt wird automatisch angelegt)..."
+BASE_DIR=$(osascript -e 'set chosenFolder to choose folder with prompt "Basis-Ordner waehlen (Projekt-Unterordner wird automatisch angelegt)"' -e 'return POSIX path of chosenFolder' 2>/dev/null)
 
-if [ -z "$OUTPUT_DIR" ]; then
-  OUTPUT_DIR="$HOME/Downloads/flora-exports"
-  echo "Kein Ordner gewählt, verwende: $OUTPUT_DIR"
+if [ -z "$BASE_DIR" ]; then
+  BASE_DIR="$HOME/Downloads/flora-exports"
+  echo "Kein Ordner gewählt, verwende: $BASE_DIR"
 fi
 
+# Projekt-Unterordner aus dem Projektnamen ableiten (dateisystem-sicher: / und : entfernen)
+SAFE_PROJECT=$(echo "$SELECTED_NAME" | sed 's#[/:]#-#g')
+OUTPUT_DIR="${BASE_DIR%/}/$SAFE_PROJECT"
 mkdir -p "$OUTPUT_DIR"
+echo -e "${GREEN}Zielordner:${NC} $OUTPUT_DIR"
 
 # --- Format ---
 echo ""
