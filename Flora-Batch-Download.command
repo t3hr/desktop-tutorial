@@ -382,10 +382,10 @@ COUNTER=${LAST_NUM:-0}
 COUNTER=$((10#$COUNTER))
 
 while IFS=$'\t' read -r ITEM_ID URL MODEL; do
-  [ -z "$ITEM_ID" ] && continue
+  [ -z "$URL" ] && continue
 
-  # Bereits heruntergeladen?
-  if echo "$ALREADY_DOWNLOADED" | grep -qF "$ITEM_ID"; then
+  # Bereits heruntergeladen? (Schluessel = Bild-URL, eindeutig pro Variante)
+  if echo "$ALREADY_DOWNLOADED" | grep -qF "$URL"; then
     SKIP_COUNT=$((SKIP_COUNT + 1))
     continue
   fi
@@ -448,8 +448,8 @@ while IFS=$'\t' read -r ITEM_ID URL MODEL; do
     fi
   done
 
-  # ID als heruntergeladen markieren
-  echo "$ITEM_ID" >> "$HISTORY_FILE"
+  # Als heruntergeladen markieren (Bild-URL als Schluessel)
+  echo "$URL" >> "$HISTORY_FILE"
 
 done < "$ENTRIES_FILE"
 
