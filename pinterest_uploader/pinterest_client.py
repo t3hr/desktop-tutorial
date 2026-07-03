@@ -100,17 +100,21 @@ class PinterestUploader:
             file_input.send_keys(str(image_path.resolve()))
 
             title_field = self.wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, sel.TITLE_INPUT))
+                EC.element_to_be_clickable((By.CSS_SELECTOR, sel.TITLE_INPUT))
             )
             title_field.clear()
             title_field.send_keys(title)
 
-            description_field = self.driver.find_element(By.CSS_SELECTOR, sel.DESCRIPTION_INPUT)
+            description_field = self.wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, sel.DESCRIPTION_INPUT))
+            )
             description_field.click()
             description_field.send_keys(description)
 
             if link:
-                link_field = self.driver.find_element(By.CSS_SELECTOR, sel.LINK_INPUT)
+                link_field = self.wait.until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, sel.LINK_INPUT))
+                )
                 link_field.clear()
                 link_field.send_keys(link)
 
