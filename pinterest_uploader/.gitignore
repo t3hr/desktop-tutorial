@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+upload_log.csv
+screenshots/
+Pinterest-Uploads/*
+!Pinterest-Uploads/.gitkeep
+!Pinterest-Uploads/uploaded/
+Pinterest-Uploads/uploaded/*
+!Pinterest-Uploads/uploaded/.gitkeep
