@@ -6,6 +6,7 @@ __pycache__/
 venv/
 upload_log.csv
 screenshots/
+Pinterest-Uploads/_prepared_for_upload/
 Pinterest-Uploads/*
 !Pinterest-Uploads/.gitkeep
 !Pinterest-Uploads/uploaded/

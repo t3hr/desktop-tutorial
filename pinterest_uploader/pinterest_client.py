@@ -17,6 +17,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 import pinterest_selectors as sel
 from config import Config
+from image_prep import prepare_for_upload
 
 LOGIN_URL = "https://www.pinterest.com/login/"
 CREATE_PIN_URL = "https://www.pinterest.com/pin-creation-tool/"
@@ -92,12 +93,13 @@ class PinterestUploader:
         link: str | None = None,
     ) -> None:
         try:
+            upload_path = prepare_for_upload(image_path)
             self.driver.get(CREATE_PIN_URL)
 
             file_input = self.wait.until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, sel.FILE_INPUT))
             )
-            file_input.send_keys(str(image_path.resolve()))
+            file_input.send_keys(str(upload_path.resolve()))
             time.sleep(4)  # Pinterest braucht kurz, um das Bild serverseitig zu verarbeiten
 
             title_field = self.wait.until(
