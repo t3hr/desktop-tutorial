@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-import selectors as sel
+import pinterest_selectors as sel
 from config import Config
 
 LOGIN_URL = "https://www.pinterest.com/login/"

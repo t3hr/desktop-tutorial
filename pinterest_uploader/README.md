@@ -55,6 +55,13 @@ regelkonforme Alternative.
 python upload_pins.py
 ```
 
+Board für einen einzelnen Lauf abweichend von `PINTEREST_BOARD_NAME` setzen,
+ohne die `.env` zu ändern:
+
+```bash
+python upload_pins.py --board "Anderes Board"
+```
+
 Ablauf pro Bild:
 
 1. Claude analysiert das Bild und liefert Titel, Beschreibung, Hashtags und
@@ -75,7 +82,7 @@ dann wird nur der generierte Content geloggt, aber nichts gepostet.
 Pinterest ändert sein Frontend gelegentlich. Bricht die Automatisierung an
 einem bestimmten Schritt ab, wird automatisch ein Screenshot unter
 `screenshots/` gespeichert. Die betroffenen CSS-Selektoren lassen sich
-zentral in `selectors.py` anpassen (per Rechtsklick → „Untersuchen“ im
+zentral in `pinterest_selectors.py` anpassen (per Rechtsklick → „Untersuchen“ im
 Browser den aktuellen Selektor ermitteln).
 
 ## Dateien
@@ -83,5 +90,5 @@ Browser den aktuellen Selektor ermitteln).
 - `upload_pins.py` – Hauptscript / Einstiegspunkt.
 - `content_generator.py` – Claude-Aufruf zur Content-Generierung.
 - `pinterest_client.py` – Selenium-Automatisierung (Login, Pin erstellen).
-- `selectors.py` – zentrale CSS-Selektoren der Pinterest-UI.
+- `pinterest_selectors.py` – zentrale CSS-Selektoren der Pinterest-UI.
 - `config.py` – lädt Konfiguration aus `.env`.

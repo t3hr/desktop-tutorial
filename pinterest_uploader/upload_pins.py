@@ -1,10 +1,11 @@
 """Liest Bilder aus dem Pinterest-Uploads-Ordner, generiert SEO-Content per
 Claude und veroeffentlicht sie automatisch als Pins auf Pinterest.
 
-Aufruf: python upload_pins.py
+Aufruf: python upload_pins.py [--board "Board Name"]
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import logging
 import shutil
@@ -39,8 +40,20 @@ def _append_log(row: dict) -> None:
         writer.writerow(row)
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Pinterest Auto-Upload")
+    parser.add_argument(
+        "--board",
+        dest="board",
+        default=None,
+        help="Board-Name fuer diesen Lauf (ueberschreibt PINTEREST_BOARD_NAME aus .env)",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
-    config = Config()
+    args = _parse_args()
+    config = Config(board_name=args.board) if args.board else Config()
     config.validate()
 
     images = _pending_images(config.upload_folder)
