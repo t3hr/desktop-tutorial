@@ -23,8 +23,6 @@ class Config:
     pinterest_password: str = os.getenv("PINTEREST_PASSWORD", "")
     board_name: str = os.getenv("PINTEREST_BOARD_NAME", "")
     destination_link: str = os.getenv("DESTINATION_LINK", "")
-    anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
-    anthropic_model: str = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5")
     upload_folder: Path = Path(os.getenv("UPLOAD_FOLDER", "Pinterest-Uploads"))
     headless: bool = _get_bool("HEADLESS", False)
     browser_profile_dir: str = os.getenv(
@@ -34,18 +32,8 @@ class Config:
     dry_run: bool = _get_bool("DRY_RUN", False)
 
     def validate(self) -> None:
-        missing = [
-            name
-            for name, value in (
-                ("ANTHROPIC_API_KEY", self.anthropic_api_key),
-                ("PINTEREST_BOARD_NAME", self.board_name),
-            )
-            if not value
-        ]
-        if missing:
-            raise SystemExit(
-                "Fehlende Konfiguration in .env: " + ", ".join(missing)
-            )
+        if not self.board_name:
+            raise SystemExit("Fehlende Konfiguration in .env: PINTEREST_BOARD_NAME")
         if not self.dry_run and not (self.pinterest_email and self.pinterest_password):
             print(
                 "Hinweis: PINTEREST_EMAIL/PINTEREST_PASSWORD nicht gesetzt. "

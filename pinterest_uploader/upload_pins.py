@@ -1,5 +1,6 @@
-"""Liest Bilder aus dem Pinterest-Uploads-Ordner, generiert SEO-Content per
-Claude und veroeffentlicht sie automatisch als Pins auf Pinterest.
+"""Liest Bilder aus dem Pinterest-Uploads-Ordner und veroeffentlicht sie
+automatisch als Pins auf Pinterest. Titel/Beschreibung/Hashtags/Alt-Text
+kommen aus content.json (vorab erstellt, z.B. von Claude im Chat).
 
 Aufruf: python upload_pins.py [--board "Board Name"]
 """
@@ -14,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from config import Config
-from content_generator import generate_pin_content
+from content_metadata import get_pin_content, load_content_map
 from pinterest_client import PinterestUploader
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
@@ -61,6 +62,8 @@ def main() -> None:
         log.info("Keine neuen Bilder in %s gefunden.", config.upload_folder)
         return
 
+    content_map = load_content_map()
+
     uploaded_dir = config.upload_folder / "uploaded"
     uploaded_dir.mkdir(exist_ok=True)
 
@@ -80,7 +83,7 @@ def main() -> None:
                 "error": "",
             }
             try:
-                content = generate_pin_content(image_path, config)
+                content = get_pin_content(image_path, content_map)
                 row["title"] = content["title"]
                 log.info("Generierter Titel: %s", content["title"])
 

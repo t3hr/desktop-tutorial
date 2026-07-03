@@ -1,10 +1,10 @@
 # Pinterest Auto-Upload
 
 Lädt Bilder aus dem Ordner `Pinterest-Uploads/` automatisch als Pins auf
-Pinterest hoch. Für jedes Bild generiert die Claude-API (Vision) einen
-SEO-optimierten Titel, eine Beschreibung, Hashtags und einen Alt-Text. Die
-Veröffentlichung erfolgt per Browser-Automatisierung (Selenium) über deinen
-normalen Pinterest-Account.
+Pinterest hoch. Titel, Beschreibung, Hashtags und Alt-Text kommen aus
+`content.json` (vorab erstellt, z.B. von Claude im Chat – kein API-Key oder
+Anthropic-Billing nötig). Die Veröffentlichung erfolgt per
+Browser-Automatisierung (Selenium) über deinen normalen Pinterest-Account.
 
 ## Wichtiger Hinweis
 
@@ -37,7 +37,6 @@ regelkonforme Alternative.
    cp .env.example .env
    ```
 
-   - `ANTHROPIC_API_KEY`: dein Claude-API-Key (https://console.anthropic.com).
    - `PINTEREST_BOARD_NAME`: exakter Name des Ziel-Boards.
    - `PINTEREST_EMAIL` / `PINTEREST_PASSWORD`: optional. Ohne diese Angaben
      öffnet sich beim ersten Lauf ein sichtbares Browserfenster, in dem du
@@ -48,6 +47,12 @@ regelkonforme Alternative.
    - `DESTINATION_LINK`: optionale Ziel-URL, die bei jedem Pin gesetzt wird.
 
 4. Bilder in `Pinterest-Uploads/` legen (`.jpg`, `.jpeg`, `.png`, `.webp`).
+
+5. `content.json` im `pinterest_uploader/`-Ordner anlegen (Format siehe
+   `content.example.json`): pro Bilddateiname ein Eintrag mit `title`,
+   `description`, `hashtags` (Liste) und `alt_text`. Am einfachsten: die
+   Bilder in einem Chat mit Claude zeigen und dir den fertigen JSON-Inhalt
+   generieren lassen.
 
 ## Ausführen
 
@@ -64,8 +69,8 @@ python upload_pins.py --board "Anderes Board"
 
 Ablauf pro Bild:
 
-1. Claude analysiert das Bild und liefert Titel, Beschreibung, Hashtags und
-   Alt-Text als JSON zurück.
+1. Titel/Beschreibung/Hashtags/Alt-Text werden anhand des Dateinamens aus
+   `content.json` gelesen.
 2. Selenium öffnet die Pinterest-Pin-Erstellung, lädt das Bild hoch, füllt
    Titel/Beschreibung/Alt-Text/Zielwebsite aus, wählt das Board aus und
    veröffentlicht den Pin.
@@ -75,7 +80,7 @@ Ablauf pro Bild:
    Fehlermeldung).
 
 Zum Testen ohne echte Veröffentlichung: `DRY_RUN=true` in `.env` setzen –
-dann wird nur der generierte Content geloggt, aber nichts gepostet.
+dann wird nur der geladene Content geloggt, aber nichts gepostet.
 
 ## Wenn ein Schritt fehlschlägt
 
@@ -88,7 +93,8 @@ Browser den aktuellen Selektor ermitteln).
 ## Dateien
 
 - `upload_pins.py` – Hauptscript / Einstiegspunkt.
-- `content_generator.py` – Claude-Aufruf zur Content-Generierung.
+- `content_metadata.py` – liest Pin-Content aus `content.json`.
+- `content.example.json` – Beispielformat für `content.json`.
 - `pinterest_client.py` – Selenium-Automatisierung (Login, Pin erstellen).
 - `pinterest_selectors.py` – zentrale CSS-Selektoren der Pinterest-UI.
 - `config.py` – lädt Konfiguration aus `.env`.
