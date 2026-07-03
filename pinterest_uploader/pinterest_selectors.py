@@ -13,17 +13,19 @@ LOGIN_SUBMIT_BUTTON = "[data-test-id='registerFormSubmitButton'], button[type='s
 FILE_INPUT = "input[type='file']"
 
 TITLE_INPUT = (
-    "[data-test-id='pin-draft-title'] input, "
-    "[data-test-id='storyboard-creation-title'] input"
+    "#storyboard-selector-title, "
+    "[data-test-id='storyboard-title-field-container'] input"
 )
 DESCRIPTION_INPUT = (
-    "[data-test-id='pin-draft-description'] div[contenteditable='true'], "
-    "[data-test-id='storyboard-creation-description'] div[contenteditable='true']"
+    "#storyboard-selector-description, "
+    "[data-test-id='storyboard-description-field-container'] textarea, "
+    "[data-test-id='storyboard-description-field-container'] input, "
+    "[data-test-id='storyboard-description-field-container'] div[contenteditable='true']"
 )
-LINK_INPUT = "[data-test-id='pin-draft-link'] input"
+LINK_INPUT = "#WebsiteField"
 
 BOARD_DROPDOWN_BUTTON = "[data-test-id='board-dropdown-select-button']"
-BOARD_SEARCH_INPUT = "[data-test-id='board-dropdown-search-input'] input"
+BOARD_SEARCH_INPUT = "#pickerSearchField"
 BOARD_OPTION_ITEM = "[data-test-id='board-list'] [data-test-id='boardWithoutSection']"
 
 ALT_TEXT_BUTTON = "[data-test-id='pin-draft-alt-text-btn'], [aria-label='Alternativtext hinzufügen']"
