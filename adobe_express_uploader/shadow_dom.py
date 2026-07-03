@@ -6,24 +6,29 @@ das rekursiv durch alle offenen Shadow Roots sucht.
 """
 from __future__ import annotations
 
+import time
+
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
+# Findet das TIEFSTE Element mit passendem Text (statt nur reine Blaetter),
+# damit Buttons mit Icon-Geschwistern (<button><svg/><span>Teilen</span></button>)
+# trotzdem zuverlaessig treffen.
 _FIND_BY_TEXT_JS = """
 function walk(root, text) {
     const children = root.children ? Array.from(root.children) : [];
+    let deepest = null;
     for (const el of children) {
         if (el.shadowRoot) {
             const found = walk(el.shadowRoot, text);
-            if (found) return found;
+            if (found) deepest = found;
         }
         const found = walk(el, text);
-        if (found) return found;
+        if (found) deepest = found;
     }
-    if (root.children && root.children.length === 0) {
-        const content = (root.textContent || "").trim();
-        if (content === text) return root;
-    }
+    if (deepest) return deepest;
+    const content = (root.textContent || "").trim();
+    if (content === text) return root;
     return null;
 }
 return walk(document.body, arguments[0]);
@@ -32,13 +37,18 @@ return walk(document.body, arguments[0]);
 _FIND_ALL_BY_TEXT_JS = """
 function walk(root, text, results) {
     const children = root.children ? Array.from(root.children) : [];
+    let foundDeeper = false;
     for (const el of children) {
         if (el.shadowRoot) {
+            const before = results.length;
             walk(el.shadowRoot, text, results);
+            if (results.length > before) foundDeeper = true;
         }
+        const before = results.length;
         walk(el, text, results);
+        if (results.length > before) foundDeeper = true;
     }
-    if (root.children && root.children.length === 0) {
+    if (!foundDeeper) {
         const content = (root.textContent || "").trim();
         if (content === text) results.push(root);
     }
@@ -66,18 +76,18 @@ return results;
 _FIND_INPUT_NEAR_LABEL_JS = """
 function walk(root, text) {
     const children = root.children ? Array.from(root.children) : [];
+    let deepest = null;
     for (const el of children) {
         if (el.shadowRoot) {
             const found = walk(el.shadowRoot, text);
-            if (found) return found;
+            if (found) deepest = found;
         }
         const found = walk(el, text);
-        if (found) return found;
+        if (found) deepest = found;
     }
-    if (root.children && root.children.length === 0) {
-        const content = (root.textContent || "").trim();
-        if (content === text) return root;
-    }
+    if (deepest) return deepest;
+    const content = (root.textContent || "").trim();
+    if (content === text) return root;
     return null;
 }
 
@@ -118,16 +128,32 @@ def query_all_deep(driver: WebDriver, css_selector: str) -> list[WebElement]:
     return driver.execute_script(_QUERY_ALL_DEEP_JS, css_selector)
 
 
-def find_input_near_label(driver: WebDriver, label_text: str) -> WebElement | None:
+def find_input_near_label(
+    driver: WebDriver, label_text: str, timeout: float = 15, interval: float = 0.5
+) -> WebElement | None:
     """Sucht ein Eingabefeld (input/textarea), das strukturell nahe einem
     Textlabel liegt (z.B. "Pin-Titel"). Heuristisch, da Adobe Express keine
     <label for=...>-Zuordnung fuer alle Felder verwendet."""
-    return driver.execute_script(_FIND_INPUT_NEAR_LABEL_JS, label_text)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        field = driver.execute_script(_FIND_INPUT_NEAR_LABEL_JS, label_text)
+        if field is not None:
+            return field
+        time.sleep(interval)
+    return None
 
 
-def click_by_text(driver: WebDriver, text: str) -> None:
-    element = find_by_text(driver, text)
-    if element is None:
-        raise RuntimeError(f"Kein Element mit Text '{text}' gefunden (auch nicht in Shadow DOM).")
+def wait_for_by_text(driver: WebDriver, text: str, timeout: float = 20, interval: float = 0.5) -> WebElement:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        element = find_by_text(driver, text)
+        if element is not None:
+            return element
+        time.sleep(interval)
+    raise TimeoutError(f"Element mit Text '{text}' nicht innerhalb {timeout}s gefunden (auch nicht in Shadow DOM).")
+
+
+def click_by_text(driver: WebDriver, text: str, timeout: float = 20) -> None:
+    element = wait_for_by_text(driver, text, timeout=timeout)
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
     element.click()
