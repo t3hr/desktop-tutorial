@@ -154,7 +154,7 @@ class PinterestUploader:
             EC.element_to_be_clickable((By.CSS_SELECTOR, sel.PUBLISH_BUTTON))
         )
         publish_button.click()
-        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, sel.PUBLISH_SUCCESS)))
+        self.wait.until(lambda d: CREATE_PIN_URL not in d.current_url)
 
     def _save_debug_screenshot(self, name: str) -> None:
         out_dir = Path("screenshots")

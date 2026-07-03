@@ -32,5 +32,4 @@ ALT_TEXT_BUTTON = "[data-test-id='pin-draft-alt-text-btn'], [aria-label='Alterna
 ALT_TEXT_INPUT = "[data-test-id='pin-draft-alt-text-input'] textarea, textarea[id*='alt-text']"
 ALT_TEXT_SAVE_BUTTON = "[data-test-id='alt-text-done-button']"
 
-PUBLISH_BUTTON = "[data-test-id='board-dropdown-save-button']"
-PUBLISH_SUCCESS = "[data-test-id='pin-published-modal'], [data-test-id='PinToast']"
+PUBLISH_BUTTON = "[data-test-id='storyboard-creation-nav-done'] button"
