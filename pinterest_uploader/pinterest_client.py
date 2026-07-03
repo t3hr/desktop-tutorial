@@ -115,6 +115,7 @@ class PinterestUploader:
                 link_field.send_keys(link)
 
             self._set_alt_text(alt_text)
+            self._mark_ai_modified()
             self._select_board(board_name)
             self._publish()
         except Exception:
@@ -148,6 +149,19 @@ class PinterestUploader:
             self.driver.find_element(By.CSS_SELECTOR, sel.ALT_TEXT_SAVE_BUTTON).click()
         except Exception:
             log.warning("Alt-Text konnte nicht gesetzt werden, Pin wird trotzdem fortgesetzt.")
+
+    def _mark_ai_modified(self) -> None:
+        try:
+            self.driver.find_element(By.CSS_SELECTOR, sel.AI_DISCLOSURE_SWITCH).click()
+            person_checkbox = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, sel.AI_PERSON_CHECKBOX_XPATH))
+            )
+            person_checkbox.click()
+        except Exception:
+            log.warning(
+                "KI-Kennzeichnung (Als KI-modifiziert / KI-generierte Person) konnte "
+                "nicht gesetzt werden, Pin wird trotzdem fortgesetzt."
+            )
 
     def _publish(self) -> None:
         publish_button = self.wait.until(

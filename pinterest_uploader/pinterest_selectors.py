@@ -32,4 +32,11 @@ ALT_TEXT_BUTTON = "[data-test-id='pin-draft-alt-text-btn'], [aria-label='Alterna
 ALT_TEXT_INPUT = "[data-test-id='pin-draft-alt-text-input'] textarea, textarea[id*='alt-text']"
 ALT_TEXT_SAVE_BUTTON = "[data-test-id='alt-text-done-button']"
 
+AI_DISCLOSURE_SWITCH = (
+    "[data-test-id='ai-disclosure-switch'] input, "
+    "[data-test-id='ai-disclosure-switch'] button, "
+    "[data-test-id='ai-disclosure-switch']"
+)
+AI_PERSON_CHECKBOX_XPATH = "//*[contains(text(), 'Dieser Pin enthält eine KI-generierte Person')]"
+
 PUBLISH_BUTTON = "[data-test-id='storyboard-creation-nav-done'] button"
