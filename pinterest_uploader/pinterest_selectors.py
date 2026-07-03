@@ -24,9 +24,13 @@ DESCRIPTION_INPUT = (
 )
 LINK_INPUT = "#WebsiteField"
 
-BOARD_DROPDOWN_BUTTON = "[data-test-id='board-dropdown-select-button']"
+# Kein stabiles data-test-id gefunden: wir ankern stattdessen am sichtbaren
+# Label-Text "Pinnwand" und der beobachteten cursor:pointer-Box direkt danach.
+BOARD_DROPDOWN_TRIGGER_XPATH = (
+    "//*[normalize-space(text())='Pinnwand']"
+    "/following::*[contains(@style,'cursor: pointer')][1]"
+)
 BOARD_SEARCH_INPUT = "#pickerSearchField"
-BOARD_OPTION_ITEM = "[data-test-id='board-list'] [data-test-id='boardWithoutSection']"
 
 ALT_TEXT_BUTTON = "[data-test-id='pin-draft-alt-text-btn'], [aria-label='Alternativtext hinzufügen']"
 ALT_TEXT_INPUT = "[data-test-id='pin-draft-alt-text-input'] textarea, textarea[id*='alt-text']"

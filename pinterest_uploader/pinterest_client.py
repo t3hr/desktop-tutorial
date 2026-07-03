@@ -123,20 +123,24 @@ class PinterestUploader:
             raise
 
     def _select_board(self, board_name: str) -> None:
-        self.driver.find_element(By.CSS_SELECTOR, sel.BOARD_DROPDOWN_BUTTON).click()
+        self.driver.find_element(By.XPATH, sel.BOARD_DROPDOWN_TRIGGER_XPATH).click()
         search_input = self.wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, sel.BOARD_SEARCH_INPUT))
         )
         search_input.send_keys(board_name)
         time.sleep(1.5)  # Debounced Suche in der Pinterest-UI abwarten
 
-        options = self.driver.find_elements(By.CSS_SELECTOR, sel.BOARD_OPTION_ITEM)
-        match = next((o for o in options if board_name.lower() in o.text.lower()), None)
-        if match is None:
+        try:
+            match = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, f"//*[normalize-space(text())='{board_name}']")
+                )
+            )
+        except TimeoutException as exc:
             raise RuntimeError(
                 f"Board '{board_name}' wurde nicht gefunden. Pruefe den exakten "
                 "Namen in PINTEREST_BOARD_NAME (.env)."
-            )
+            ) from exc
         match.click()
 
     def _set_alt_text(self, alt_text: str) -> None:
