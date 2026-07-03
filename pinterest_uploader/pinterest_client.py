@@ -98,6 +98,7 @@ class PinterestUploader:
                 EC.presence_of_element_located((By.CSS_SELECTOR, sel.FILE_INPUT))
             )
             file_input.send_keys(str(image_path.resolve()))
+            time.sleep(4)  # Pinterest braucht kurz, um das Bild serverseitig zu verarbeiten
 
             title_field = self.wait.until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, sel.TITLE_INPUT))
@@ -121,6 +122,7 @@ class PinterestUploader:
             self._set_alt_text(alt_text)
             self._mark_ai_modified()
             self._select_board(board_name)
+            time.sleep(2)  # Sicherheitsmarge, damit das Bild sicher fertig verarbeitet ist
             self._publish()
         except Exception:
             self._save_debug_screenshot(image_path.stem)
