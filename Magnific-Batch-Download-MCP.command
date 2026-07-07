@@ -46,6 +46,7 @@ KS_CLIENT = "magnific-mcp-client-id"
 KS_REG_TOKEN = "magnific-mcp-reg-token"
 HISTORY_FILE = Path.home() / ".magnific-download-history"
 DEFAULT_OUTPUT = Path.home() / "Downloads" / "magnific"
+FOLDER_CACHE = Path.home() / ".magnific-folder-cache.json"
 CALLBACK_PORT = 18247
 
 # Colors
@@ -809,17 +810,52 @@ def main():
         input("\nDruecke Enter zum Beenden...")
         sys.exit(1)
 
-    # Folder tree – live von Magnific holen (immer aktuell), sonst Fallback
-    print("\nLade aktuelle Ordnerstruktur von Magnific...")
-    try:
+    # Folder tree – aus Cache (sofort) oder live von Magnific holen
+    def load_live_and_cache():
         live = fetch_folder_tree(mcp)
         if live:
-            FOLDERS = live
-            print(f"{G}Ordnerstruktur live geladen ({len(FOLDERS)} Ordner).{N}")
+            try:
+                FOLDER_CACHE.write_text(json.dumps(
+                    {"saved": time.strftime("%Y-%m-%d %H:%M"), "folders": live},
+                    ensure_ascii=False))
+            except Exception:
+                pass
+        return live
+
+    cached = None
+    saved = "?"
+    if FOLDER_CACHE.exists():
+        try:
+            data = json.loads(FOLDER_CACHE.read_text())
+            cached = data.get("folders") or None
+            saved = data.get("saved", "?")
+        except Exception:
+            cached = None
+
+    if cached:
+        print(f"\n{C}Ordnerstruktur aus Cache (Stand: {saved}, {len(cached)} Ordner).{N}")
+        ans = input("  [Enter] Cache nutzen  |  [n] neu von Magnific laden: ").strip().lower()
+        if ans == "n":
+            print("Lade aktuelle Ordnerstruktur von Magnific...")
+            try:
+                live = load_live_and_cache()
+                FOLDERS = live if live else cached
+            except Exception as e:
+                print(f"{Y}Live-Abfrage fehlgeschlagen ({e}) – nutze Cache.{N}")
+                FOLDERS = cached
         else:
-            print(f"{Y}Keine Ordner erhalten – nutze eingebaute Liste.{N}")
-    except Exception as e:
-        print(f"{Y}Live-Abfrage fehlgeschlagen ({e}) – nutze eingebaute Liste.{N}")
+            FOLDERS = cached
+    else:
+        print("\nLade aktuelle Ordnerstruktur von Magnific (einmalig, wird gecacht)...")
+        try:
+            live = load_live_and_cache()
+            if live:
+                FOLDERS = live
+                print(f"{G}Ordnerstruktur geladen und gecacht ({len(FOLDERS)} Ordner).{N}")
+            else:
+                print(f"{Y}Keine Ordner erhalten – nutze eingebaute Liste.{N}")
+        except Exception as e:
+            print(f"{Y}Live-Abfrage fehlgeschlagen ({e}) – nutze eingebaute Liste.{N}")
 
     paths = sorted(FOLDERS.keys())
     print(f"\n{B}Verfuegbare Ordner:{N}")
