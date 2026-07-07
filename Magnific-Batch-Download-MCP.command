@@ -716,7 +716,49 @@ def download_folder(mcp, path, ref, out, fmt, history):
     return dl, skip
 
 # ─── Main ────────────────────────────────────────────────────
+# ─── Live-Ordnerbaum (folders_list, rekursiv) ────────────────
+def parse_folders(text):
+    # YAML-artige Ausgabe von folders_list:
+    #   items[7]:
+    #     - reference: <uuid>
+    #       name: automotive
+    #       parent:
+    #         id: <uuid>
+    #         name: My workspace
+    # Item-Name steht bei 4 Leerzeichen, parent.name bei 6 -> nur 4 nehmen.
+    out = []
+    for line in text.split("\n"):
+        m = re.match(r'^\s*-\s*reference:\s*(\S+)', line)
+        if m:
+            out.append([m.group(1).strip().strip('"'), None])
+            continue
+        m = re.match(r'^ {4}name:\s*(.+?)\s*$', line)
+        if m and out and out[-1][1] is None:
+            nm = m.group(1).strip()
+            if len(nm) >= 2 and nm[0] == '"' and nm[-1] == '"':
+                nm = nm[1:-1]
+            out[-1][1] = nm
+    return [(nm, ref) for ref, nm in out if nm]
+
+def fetch_folder_tree(mcp):
+    tree = {}
+    count = [0]
+    def crawl(parent_ref, prefix):
+        args = {} if parent_ref is None else {"parentReference": parent_ref}
+        text = mcp.tool("folders_list", args)
+        for name, ref in parse_folders(text):
+            path = f"{prefix}/{name}" if prefix else name
+            tree[path] = ref
+            count[0] += 1
+            sys.stdout.write(f"\r  {count[0]} Ordner gefunden...")
+            sys.stdout.flush()
+            crawl(ref, path)
+    crawl(None, "")
+    sys.stdout.write("\n")
+    return tree
+
 def main():
+    global FOLDERS
     print()
     print("+" + "=" * 40 + "+")
     print("|    Magnific Batch Download via MCP    |")
@@ -767,7 +809,18 @@ def main():
         input("\nDruecke Enter zum Beenden...")
         sys.exit(1)
 
-    # Folder tree
+    # Folder tree – live von Magnific holen (immer aktuell), sonst Fallback
+    print("\nLade aktuelle Ordnerstruktur von Magnific...")
+    try:
+        live = fetch_folder_tree(mcp)
+        if live:
+            FOLDERS = live
+            print(f"{G}Ordnerstruktur live geladen ({len(FOLDERS)} Ordner).{N}")
+        else:
+            print(f"{Y}Keine Ordner erhalten – nutze eingebaute Liste.{N}")
+    except Exception as e:
+        print(f"{Y}Live-Abfrage fehlgeschlagen ({e}) – nutze eingebaute Liste.{N}")
+
     paths = sorted(FOLDERS.keys())
     print(f"\n{B}Verfuegbare Ordner:{N}")
     print(f"  {B}0) * ALLE Ordner{N}")
