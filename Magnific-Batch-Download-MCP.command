@@ -512,6 +512,9 @@ class MCP:
         return "\n".join(c.get("text", "") for c in content if c.get("type") == "text")
 
     def _rpc(self, method, params):
+        return self._rpc_try(method, params, allow_refresh=True)
+
+    def _rpc_try(self, method, params, allow_refresh):
         self.rid += 1
         h = {
             "Content-Type": "application/json",
@@ -521,19 +524,41 @@ class MCP:
         if self.sid:
             h["Mcp-Session-Id"] = self.sid
         body = json.dumps({"jsonrpc": "2.0", "method": method, "params": params, "id": self.rid}).encode()
-        req = urllib.request.Request(MCP_ENDPOINT, data=body, headers=h)
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            sid = resp.headers.get("Mcp-Session-Id")
-            if sid:
-                self.sid = sid
-            raw = resp.read().decode()
-            ct = resp.headers.get("Content-Type", "")
-            if "text/event-stream" in ct:
-                for line in raw.split("\n"):
-                    if line.startswith("data: "):
-                        return json.loads(line[6:])
-                return {}
-            return json.loads(raw)
+        last = None
+        for attempt in range(3):
+            req = urllib.request.Request(MCP_ENDPOINT, data=body, headers=h)
+            try:
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    sid = resp.headers.get("Mcp-Session-Id")
+                    if sid:
+                        self.sid = sid
+                    raw = resp.read().decode()
+                    ct = resp.headers.get("Content-Type", "")
+                    if "text/event-stream" in ct:
+                        for line in raw.split("\n"):
+                            if line.startswith("data: "):
+                                return json.loads(line[6:])
+                        return {}
+                    return json.loads(raw)
+            except urllib.error.HTTPError as e:
+                # Token abgelaufen -> einmal erneuern, Session neu aufbauen, wiederholen
+                if e.code == 401 and allow_refresh and getattr(self, "reauth", None):
+                    print(f"{Y}Token abgelaufen – erneuere Anmeldung...{N}")
+                    self.token = self.reauth()
+                    self.sid = None
+                    self._rpc_try("initialize", {
+                        "protocolVersion": "2025-03-26",
+                        "capabilities": {},
+                        "clientInfo": {"name": "magnific-batch-download", "version": "1.0.0"},
+                    }, allow_refresh=False)
+                    self._notify("notifications/initialized")
+                    return self._rpc_try(method, params, allow_refresh=False)
+                raise
+            except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+                # kurzzeitiger Netz-Aussetzer -> mit Backoff wiederholen
+                last = e
+                time.sleep(2 * (attempt + 1))
+        raise last
 
     def _notify(self, method):
         h = {"Content-Type": "application/json", "Authorization": f"Bearer {self.token}"}
@@ -588,14 +613,28 @@ def parse_single(text):
 
 # ─── Download ────────────────────────────────────────────────
 def download_file(url, path):
-    req = urllib.request.Request(url, headers={"User-Agent": "Magnific-Batch/1.0"})
-    with urllib.request.urlopen(req, timeout=180) as resp:
-        with open(path, "wb") as f:
-            while True:
-                chunk = resp.read(65536)
-                if not chunk:
-                    break
-                f.write(chunk)
+    last = None
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Magnific-Batch/1.0"})
+            with urllib.request.urlopen(req, timeout=180) as resp:
+                with open(path, "wb") as f:
+                    while True:
+                        chunk = resp.read(65536)
+                        if not chunk:
+                            break
+                        f.write(chunk)
+            return
+        except Exception as e:
+            last = e
+            # angefangene/halbe Datei entfernen, damit nichts Kaputtes liegen bleibt
+            try:
+                if path.exists():
+                    path.unlink()
+            except Exception:
+                pass
+            time.sleep(1.5 * (attempt + 1))
+    raise last
 
 def write_exif(path, prompt, title):
     try:
@@ -794,6 +833,7 @@ def main():
     # MCP
     print("Verbinde mit Magnific MCP...")
     mcp = MCP(token)
+    mcp.reauth = authenticate  # fuer Auto-Token-Refresh bei 401 waehrend langer Laeufe
     try:
         mcp.initialize()
         print(f"{G}MCP-Verbindung OK.{N}")
