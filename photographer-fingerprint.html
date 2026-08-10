@@ -511,57 +511,73 @@
 
         function buildPrompt(photId, subject, genId, mood, style) {
             const phot = photographers[photId];
-
-            const technicalParts = [
-                phot.technical.color_language,
-                phot.technical.grain,
-                phot.technical.tonality
-            ];
-
-            const compositionParts = [
-                phot.composition.lighting,
-                phot.composition.perspective
-            ];
-
-            const emotionalTone = mood || phot.emotional_palette.slice(0, 3).join(', ');
-            const characteristics = phot.characteristics.slice(0, 3).join(', ');
+            const emotionalTone = mood || phot.emotional_palette.slice(0, 4).join(', ');
 
             let prompt;
 
             if (genId === 'midjourney') {
                 prompt = `${subject}, inspired by ${phot.name}.
 
-Technical: ${technicalParts.slice(0, 2).join('. ')}.
-Composition: ${compositionParts.join(', ')}.
-Signature style: ${characteristics}.
-Emotional tone: ${emotionalTone}.
+TECHNICAL:
+- Color: ${phot.technical.color_language}
+- Film: ${phot.technical.film_stock}
+- Grain: ${phot.technical.grain}
+- Camera: ${phot.technical.camera}
+- Lens: ${phot.technical.lens}
+- Exposure: ${phot.technical.exposure}
+- Tonality: ${phot.technical.tonality}
 
-Film: ${phot.technical.film_stock}.
-Perspective: ${phot.technical.lens}.
-Negative space: ${phot.composition.negative_space}.
+COMPOSITION:
+- Lighting: ${phot.composition.lighting}
+- Perspective: ${phot.composition.perspective}
+- Depth: ${phot.composition.depth}
+- Negative space: ${phot.composition.negative_space}
+
+SIGNATURE STYLE:
+- ${phot.characteristics.join(', ')}
+
+EMOTIONAL TONE:
+${emotionalTone}
 
 ${style}
 
 --style raw --ar 16:9`;
+
             } else if (['nano-banana-pro', 'nano-banana-2'].includes(genId)) {
-                prompt = `${phot.name} style: ${subject}. ${characteristics}. ${phot.technical.color_language}. ${phot.composition.lighting}. ${emotionalTone}. ${style}`.trim();
+                prompt = `${phot.name} style photography: ${subject}.
+Camera: ${phot.technical.camera}, Lens: ${phot.technical.lens}, Film: ${phot.technical.film_stock}.
+${phot.technical.color_language}. ${phot.technical.grain}.
+Lighting: ${phot.composition.lighting}.
+Composition: ${phot.composition.perspective}, ${phot.composition.depth}.
+Characteristics: ${phot.characteristics.join(', ')}.
+Mood: ${emotionalTone}. ${style}`.trim();
+
             } else {
                 prompt = `A photograph of ${subject}, inspired by ${phot.name}.
 
-Technical characteristics:
-- ${phot.technical.color_language}
-- ${phot.technical.film_stock}
-- Grain: ${phot.technical.grain}
+═══ TECHNICAL SPECIFICATIONS ═══
+Color Treatment: ${phot.technical.color_language}
+Camera: ${phot.technical.camera}
+Lens: ${phot.technical.lens}
+Film Stock: ${phot.technical.film_stock}
+Grain: ${phot.technical.grain}
+Exposure: ${phot.technical.exposure}
+Tonality: ${phot.technical.tonality}
 
-Composition:
-- ${phot.composition.lighting}
-- ${phot.composition.perspective}
-- ${phot.composition.depth}
+═══ COMPOSITION ═══
+Lighting: ${phot.composition.lighting}
+Perspective: ${phot.composition.perspective}
+Depth of Field: ${phot.composition.depth}
+Negative Space: ${phot.composition.negative_space}
 
-Signature: ${characteristics}
-Emotional tone: ${emotionalTone}
+═══ SIGNATURE CHARACTERISTICS ═══
+${phot.characteristics.map((c, i) => `${i + 1}. ${c}`).join('\n')}
 
-${style}`;
+═══ EMOTIONAL QUALITY ═══
+${emotionalTone}
+
+═══ ADDITIONAL NOTES ═══
+${style || 'Documentary integrity with artistic vision'}`;
             }
 
             return prompt.trim();
