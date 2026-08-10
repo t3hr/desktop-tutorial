@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photographer Fingerprint Generator</title>
+    <title>Photographer Fingerprint Generator — 13 Masters</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
             color: #e0e0e0;
             min-height: 100vh;
@@ -146,14 +146,14 @@
             border: 1px solid #3a3a3a;
             border-radius: 4px;
             padding: 15px;
-            min-height: 100px;
+            min-height: 150px;
             line-height: 1.6;
             white-space: pre-wrap;
             word-break: break-word;
-            font-size: 0.9em;
+            font-size: 0.85em;
             font-family: 'Monaco', 'Menlo', monospace;
             color: #0f0;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
@@ -199,55 +199,6 @@
             font-family: monospace;
         }
 
-        .examples {
-            background: #252525;
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            padding: 30px;
-            margin-bottom: 40px;
-        }
-
-        .examples h2 {
-            font-size: 1.3em;
-            margin-bottom: 20px;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .example-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-
-        .example-btn {
-            background: #1a1a1a;
-            border: 1px solid #3a3a3a;
-            padding: 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-            color: #e0e0e0;
-        }
-
-        .example-btn:hover {
-            border-color: #6ba3e5;
-            background: #2a2a2a;
-        }
-
-        .example-btn-title {
-            font-weight: 600;
-            color: #6ba3e5;
-            margin-bottom: 4px;
-            font-size: 0.9em;
-        }
-
-        .example-btn-desc {
-            font-size: 0.8em;
-            color: #888;
-        }
-
         @media (max-width: 768px) {
             .content {
                 grid-template-columns: 1fr;
@@ -258,10 +209,14 @@
             }
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #888;
+        .info-box {
+            background: #1a1a1a;
+            border-left: 4px solid #6ba3e5;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -269,7 +224,7 @@
     <div class="container">
         <header>
             <h1>📸 Photographer Fingerprint Generator</h1>
-            <p class="subtitle">Transform photographer styles into optimized AI image prompts</p>
+            <p class="subtitle">13 Masters • 100% Style Transfer • Professional Prompts</p>
         </header>
 
         <div class="content">
@@ -278,7 +233,7 @@
                 <h2>Create Your Prompt</h2>
 
                 <div class="form-group">
-                    <label for="photographer">Select Photographer</label>
+                    <label for="photographer">Select Photographer (13 Available)</label>
                     <select id="photographer" onchange="updateFingerprint()">
                         <option value="">Choose a photographer...</option>
                     </select>
@@ -287,32 +242,36 @@
 
                 <div class="form-group">
                     <label for="subject">Describe Your Scene *</label>
-                    <textarea id="subject" placeholder="e.g., An elderly woman resting after working in a field..."></textarea>
+                    <textarea id="subject" placeholder="e.g., An elderly woman in a field at golden hour..."></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="mood">Mood / Emotion (optional)</label>
-                    <input type="text" id="mood" placeholder="e.g., melancholic, hopeful, intense">
+                    <input type="text" id="mood" placeholder="e.g., melancholic, hopeful, nostalgic">
                 </div>
 
                 <div class="form-group">
-                    <label for="style">Additional Style (optional)</label>
-                    <input type="text" id="style" placeholder="e.g., harsh shadows, film noir, golden hour">
+                    <label for="style">Additional Notes (optional)</label>
+                    <input type="text" id="style" placeholder="e.g., specific location, season, time of day">
                 </div>
 
                 <div class="form-group">
                     <label for="generator">Select Image Generator</label>
                     <select id="generator">
-                        <option value="">Choose a generator...</option>
+                        <option value="dalle">🎨 DALL-E 3</option>
+                        <option value="midjourney">🎬 Midjourney</option>
+                        <option value="stable">⚙️ Stable Diffusion 3</option>
+                        <option value="nano">⚡ Nano Banana Pro</option>
+                        <option value="higgsfield">✨ Higgsfield</option>
                     </select>
                 </div>
 
-                <button onclick="generatePrompt()">✨ Generate Prompt</button>
+                <button onclick="generatePrompt()">✨ Generate Full Prompt</button>
             </div>
 
             <!-- RIGHT PANEL: OUTPUT -->
             <div class="panel">
-                <h2>Your Prompt</h2>
+                <h2>Your Fingerprint Prompt</h2>
 
                 <div class="output-section">
                     <div class="prompt-box" id="promptOutput">
@@ -327,153 +286,210 @@
                         <span class="metadata-value" id="metaPhotographer">—</span>
                     </div>
                     <div class="metadata-item">
-                        <span class="metadata-label">Generator</span>
-                        <span class="metadata-value" id="metaGenerator">—</span>
+                        <span class="metadata-label">Era</span>
+                        <span class="metadata-value" id="metaEra">—</span>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- EXAMPLES -->
-        <div class="examples">
-            <h2>💡 Quick Examples</h2>
-            <div class="example-grid" id="examplesGrid"></div>
+                <div class="info-box">
+                    <strong>📌 Fingerprint Strength:</strong> All 13 photographers include complete technical DNA (camera, film, grain, light doctrine, composition rules, excludes). This is <strong>professional-grade style transfer</strong>.
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // PHOTOGRAPHER DATABASE
+        // COMPLETE PHOTOGRAPHER DATABASE (13 MASTERS)
         const photographers = {
-            "koudelka": {
-                "name": "Josef Koudelka",
-                "nationality": "Czech-French",
-                "birth_year": 1938,
-                "fingerprint_short": "Master of dramatic B&W documentary-humanism. Grainy, high-contrast B&W with Leica wide-angle, hard sidelight, geometrically precise compositions.",
-                "characteristics": [
-                    "Extreme high contrast",
-                    "Visible coarse grain",
-                    "Hard geometric light",
-                    "Documentary honesty",
-                    "Spatial depth emphasis",
-                    "Wide-angle perspective"
-                ],
-                "emotional_palette": ["gravitas", "melancholic", "politically-aware", "intense", "truthful"],
-                "technical": {
-                    "color_language": "100% B&W, extreme high contrast, crushed blacks",
-                    "film_stock": "Kodak Tri-X, HP5",
-                    "grain": "Medium to strong, intentionally visible",
-                    "camera": "Leica M-series",
-                    "lens": "Wide-angle: 28mm, 35mm",
-                    "exposure": "Underexposed, dark aesthetic",
-                    "tonality": "Extreme contrast, few mid-tones"
-                },
-                "composition": {
-                    "lighting": "Hard directional light, sidelight, backlighting, strong shadows",
-                    "perspective": "Eye-level, human scale, documentary",
-                    "depth": "Continuously focused, spatial complexity",
-                    "negative_space": "Generous but dramatic, emptiness has meaning"
-                }
+            "webb": {
+                "name": "Alex Webb",
+                "era": "1960s–present",
+                "camera": "Leica M Rangefinder, 35mm",
+                "film": "Kodachrome 64 (Color)",
+                "grain": "Fine, structured",
+                "exposure": "Exposed for highlights → deep shadow",
+                "light": "Hard tropical sun (midday), high contrast, deep shadows",
+                "composition": "Orderly Chaos — stratified FG/MG/BG depth, dense frame, geometric overlay",
+                "color": "Selectively saturated, warm Kodachrome cast, color vibrates in scene",
+                "excludes": "NO anamorphic bokeh, NO teal-amber, NO golden-hour, NO diffusion bloom",
+                "fingerprint": "Leica rangefinder, Kodachrome, hard tropical sun, stratified depth, orderly chaos composition"
             },
             "salgado": {
                 "name": "Sebastião Salgado",
-                "nationality": "Brazilian",
-                "birth_year": 1944,
-                "fingerprint_short": "Epic humanist of B&W photography. Monumental compositions with humans in landscapes, soft diffuse light, poetic-melancholic tonality.",
-                "characteristics": [
-                    "Monumental scale",
-                    "Soft diffuse light",
-                    "Fine film grain",
-                    "Humans in nature",
-                    "Poetic romantic tonality",
-                    "Multiple spatial planes"
-                ],
-                "emotional_palette": ["dignity", "hope", "melancholy", "sublime", "respectful", "poetic"],
-                "technical": {
-                    "color_language": "99% B&W, rich grey tones, melancholic-warm",
-                    "film_stock": "Ilford HP5, Kodak Tri-X",
-                    "grain": "Fine to medium, optimized for large format",
-                    "camera": "Leica M-series or Hasselblad 500C",
-                    "lens": "24mm to 100mm, preferred 35mm and 50mm",
-                    "exposure": "Correct to slightly overexposed, poetic light",
-                    "tonality": "Moderate-high contrast, many grey tones, romantic"
-                },
-                "composition": {
-                    "lighting": "Soft diffuse light, golden hour, overcast, ethereal",
-                    "perspective": "Human-scale respectful, often aerial for scale",
-                    "depth": "Continuously focused, context visible everywhere",
-                    "negative_space": "Generous and breathing, structured with light"
-                }
+                "era": "1970s–present",
+                "camera": "Leica M6 + Pentax 67 (medium format)",
+                "film": "Kodak Tri-X 400 (B&W)",
+                "grain": "Structured, moderate",
+                "exposure": "Shadow detail → deep charcoal",
+                "light": "Natural light, directional, high-contrast, monumental, dignifying",
+                "composition": "Systemic-monumental, epic scale, shows labor systems at scale",
+                "color": "B&W exclusively, high-contrast, rich tonal range",
+                "excludes": "NO CGI, NO plastic, NO AI smoothing, NO color, NO artificial light",
+                "fingerprint": "Leica/Pentax 67, Tri-X B&W, systemic monumental composition, dignity preserved"
+            },
+            "soth": {
+                "name": "Alec Soth",
+                "era": "1990s–present",
+                "camera": "8x10 Large-Format (Deardorff, Cambo), 300mm",
+                "film": "Kodak Portra 400 (Color)",
+                "grain": "Fine, structured",
+                "exposure": "Soft, diffuse light",
+                "light": "Natural interior/golden hour, soft, diffuse, never harsh",
+                "composition": "Straightforward minimalist, threshold spaces, wide DoF, contemplative",
+                "color": "Warm natural Portra palette, moderate saturation, rich layered tonality",
+                "excludes": "NO dramatic lighting, NO color saturation boost, NO theatrical emotion",
+                "fingerprint": "8x10 large-format, Portra 400, soft natural light, threshold spaces, contemplative"
+            },
+            "maier": {
+                "name": "Vivian Maier",
+                "era": "1950s–1990s",
+                "camera": "Rolleiflex TLR (6x6), later Leica IIIc",
+                "film": "Kodak Tri-X (B&W) / Ektachrome (Color)",
+                "grain": "Fine to moderate",
+                "exposure": "High-contrast B&W or saturated color",
+                "light": "Natural street light exclusively, never manipulated",
+                "composition": "Waist-level perspective, candid close-up fearless, encounter-based",
+                "color": "High-contrast B&W or saturated color, street-found",
+                "excludes": "NO posed subjects, NO artificial light, NO melancholic slowness",
+                "fingerprint": "Rolleiflex TLR, waist-level perspective, candid encounter, humor + irony"
+            },
+            "eggleston": {
+                "name": "William Eggleston",
+                "era": "1960s–present",
+                "camera": "Leica M, Canon AE-1",
+                "film": "Kodachrome 64, Dye-Transfer",
+                "grain": "Fine, vivid",
+                "exposure": "High-key bright, democratic",
+                "light": "Natural light only, high-key bright, democratic",
+                "composition": "Democratic — all subjects equal, meticulous framing under snapshot-casual",
+                "color": "Dye-Transfer saturated (vivid, high-key), color IS protagonist",
+                "excludes": "NO dramatic lighting, NO narrative arc, NO artificial light",
+                "fingerprint": "Kodachrome Dye-Transfer, color democratized, banal objects extraordinary"
+            },
+            "frank": {
+                "name": "Robert Frank",
+                "era": "1950s–1970s",
+                "camera": "Leica M3 + Nikon S2",
+                "film": "B&W high-contrast, fine grain",
+                "grain": "Fine but visible, documentary",
+                "exposure": "Harsh shadows, available light only",
+                "light": "Natural street light, harsh, found, unmanipulated",
+                "composition": "Intentional imperfection (blurry, crooked, grainy), candid, quick",
+                "color": "B&W exclusively, high-contrast, anti-technical-perfection",
+                "excludes": "NO artificial light, NO melodrama, NO anamorphic bokeh, NO explanation",
+                "fingerprint": "Leica M3/Nikon, B&W high-contrast, intentional imperfection, Beat sensibility"
+            },
+            "moriyama": {
+                "name": "Daido Moriyama",
+                "era": "1960s–present",
+                "camera": "Contax G2 compact, shoot from hip",
+                "film": "Kodak Tri-X 400 (B&W, high-contrast)",
+                "grain": "EXTREME — visible, intentional, philosophical",
+                "exposure": "Deep black shadows (near silhouette)",
+                "light": "Available + neon + urban street light, hard contrast, Tokyo night",
+                "composition": "Are-Bure-Boke (grainy-blurry-out-of-focus), fragmentary, non-hierarchical",
+                "color": "B&W exclusively, dramatic black-white separation, no midtone smoothing",
+                "excludes": "NO artificial light correction, NO midtone smoothing, NO photographic perfection",
+                "fingerprint": "Contax G2, Tri-X extreme grain, Tokyo neon night, are-bure-boke doctrine"
+            },
+            "drake": {
+                "name": "Carolyn Drake",
+                "era": "1990s–present",
+                "camera": "Digital + Analog hybrid",
+                "film": "Color OR B&W project-dependent",
+                "grain": "Variable per project",
+                "exposure": "Natural, soft, no dramatic contrasts",
+                "light": "Indoor-disposed, diffuse, not neon-sharp, warm-toned",
+                "composition": "Direct frontal composition, group-focused, collaboration-based",
+                "color": "Warm skin tones always, muted or vibrant per narrative",
+                "excludes": "NO street-candid, NO dramatic lighting, NO savior-narrative",
+                "fingerprint": "Hybrid digital+analog, warm soft light, group collaboration, textile integration"
+            },
+            "koudelka": {
+                "name": "Josef Koudelka",
+                "era": "1960s–present",
+                "camera": "Exakta → Leica M → Fuji GX617 panoramic",
+                "film": "B&W high-contrast, push-processed to 1600-3200 ASA",
+                "grain": "Heavy, structured, intentional",
+                "exposure": "Deep black shadows with minimal detail",
+                "light": "Natural exclusively, directional, sculpting, theater-influenced",
+                "composition": "Dramatic precise, strong diagonals, figure isolated in emptiness",
+                "color": "B&W exclusively, extreme contrast, few midtones",
+                "excludes": "NO color, NO soft diffusion, NO golden-hour, NO snapshot-casual",
+                "fingerprint": "Leica M, B&W push-processed extreme grain, diagonal isolation, exile aesthetic"
+            },
+            "ijewere": {
+                "name": "Nadine Ijewere",
+                "era": "2000s–present",
+                "camera": "Analog film handheld (color)",
+                "film": "Color exclusively, warm tones dominant",
+                "grain": "Fine, warm film-characteristic",
+                "exposure": "Warm, directional, flattering skin lighting",
+                "light": "Natural + studio hybrid, warm, skin-first priority",
+                "composition": "Anschnitt (deliberate cropping at frame edge), group shots, community-focused",
+                "color": "Warm dominant (burnt orange, coral, pink, red, warm blue), saturated but controlled",
+                "excludes": "NO B&W, NO cool tones, NO clinical light, NO complete figures cleanly in frame",
+                "fingerprint": "Color analog, warm skin-first lighting, anschnitt cropping doctrine, community joy"
+            },
+            "sundsbø": {
+                "name": "Sølve Sundsbø",
+                "era": "1990s–present",
+                "camera": "Hasselblad digital back, RED Epic (motion)",
+                "film": "Digital exclusively, medium-format",
+                "grain": "NONE — clean digital, high-resolution",
+                "exposure": "Engineered light, dramatic, sculpting",
+                "light": "ENGINEERED exclusively, single-light preferred, dramatic, minimal",
+                "composition": "Tight cropping to abstraction, body as sculptural form, surreal formula",
+                "color": "Trademark saturated (vivid, intense, otherworldly)",
+                "excludes": "NO available/natural light as sole, NO analog grain, NO narrative/social-critique",
+                "fingerprint": "Hasselblad digital, engineered single light, surreal formula, trompe l'oeil in-camera"
+            },
+            "åkrans": {
+                "name": "Camilla Åkrans",
+                "era": "2000s–present",
+                "camera": "Digital medium-format",
+                "film": "Digital with analog warmth-sensibility",
+                "grain": "Clean digital with analog feel",
+                "exposure": "Soft luminous, backlight glow/halo",
+                "light": "Engineered to feel natural, BACKLIGHT signature, soft-filter diffusion",
+                "composition": "Pared-back elegant, woman center-frame, flowers recurring, graphic lines",
+                "color": "Vivid elegant, warm skin tones, Scandinavian warmth, rich textile colors",
+                "excludes": "NO harsh contrast, NO cold/clinical, NO multi-light complexity, NO documentary detail",
+                "fingerprint": "Digital medium-format, backlight+soft-filter (evanescent), feminine gaze, Scandinavian warmth"
+            },
+            "doisneau": {
+                "name": "Robert Doisneau",
+                "era": "1930s–1990s",
+                "camera": "Rolleiflex TLR (6x6), Leica M3",
+                "film": "Tri-X 400 (B&W) / Kodachrome (color)",
+                "grain": "Fine, structured, elegant",
+                "exposure": "Warm, observational, moderate contrast",
+                "light": "Natural preferred (street/available), warm, never harsh-dramatic",
+                "composition": "Simple elegant, storytelling, subtly staged spontaneity, Rolleiflex fishing",
+                "color": "Mode A: Tri-X warm B&W | Mode B: Kodachrome muted sensitive",
+                "excludes": "NO bitterness, NO fragmentary chaos, NO existential emptiness, NO aggressive imperfection",
+                "fingerprint": "Rolleiflex 6x6, warm natural light, storytelling humor, tender irony, poetic realism"
             }
         };
 
-        // GENERATORS DATABASE
-        const generators = {
-            "dalle": { name: "DALL-E 3", description: "Realistic photography, excellent prompt understanding", icon: "🎨" },
-            "midjourney": { name: "Midjourney", description: "Cinematic quality, fine details, artistic interpretation", icon: "🎬" },
-            "stable-diffusion": { name: "Stable Diffusion 3", description: "Open source, flexible, local deployment", icon: "⚙️" },
-            "nano-banana-pro": { name: "Nano Banana Pro", description: "Fast generation, concise prompts, real-time", icon: "⚡" },
-            "nano-banana-2": { name: "Nano Banana 2", description: "Improved quality, technical control, focused", icon: "🎯" }
-        };
-
-        // EXAMPLES
-        const examples = [
-            {
-                title: "Koudelka Street",
-                photographer: "koudelka",
-                subject: "Man walking through a decrepit industrial area, harsh midday light creating stark shadows",
-                generator: "midjourney",
-                mood: "",
-                style: ""
-            },
-            {
-                title: "Salgado Landscape",
-                photographer: "salgado",
-                subject: "Workers in a gold mine, exhausted but dignified, golden light filtering through dust",
-                generator: "dalle",
-                mood: "",
-                style: ""
-            },
-            {
-                title: "Koudelka Portrait",
-                photographer: "koudelka",
-                subject: "Woman in abandoned factory, standing against broken windows, extreme contrast",
-                generator: "stable-diffusion",
-                mood: "melancholic",
-                style: "film noir"
-            },
-            {
-                title: "Salgado Humanist",
-                photographer: "salgado",
-                subject: "Family gathered around a field after harvest, soft evening light, multiple generations",
-                generator: "midjourney",
-                mood: "hopeful",
-                style: "monumental scale"
-            }
+        const photographers_order = [
+            "webb", "salgado", "soth", "maier", "eggleston", "frank",
+            "moriyama", "drake", "koudelka", "ijewere", "sundsbø", "åkrans", "doisneau"
         ];
 
-        // INITIALIZE
         function init() {
             populateSelects();
-            generateExamples();
             updateFingerprint();
         }
 
         function populateSelects() {
             const photSelect = document.getElementById('photographer');
-            const genSelect = document.getElementById('generator');
-
-            Object.entries(photographers).forEach(([id, data]) => {
+            photographers_order.forEach(id => {
+                const phot = photographers[id];
                 const opt = document.createElement('option');
                 opt.value = id;
-                opt.textContent = data.name;
+                opt.textContent = `📸 ${phot.name}`;
                 photSelect.appendChild(opt);
-            });
-
-            Object.entries(generators).forEach(([id, data]) => {
-                const opt = document.createElement('option');
-                opt.value = id;
-                opt.textContent = `${data.icon} ${data.name}`;
-                genSelect.appendChild(opt);
             });
         }
 
@@ -482,12 +498,17 @@
             const preview = document.getElementById('fingerprint');
 
             if (!photId) {
-                preview.textContent = '← Select a photographer to see their fingerprint';
+                preview.textContent = '← Select a photographer to see complete technical fingerprint';
                 return;
             }
 
             const phot = photographers[photId];
-            preview.textContent = phot.fingerprint_short;
+            preview.textContent = `CAMERA: ${phot.camera}
+FILM: ${phot.film}
+LIGHT: ${phot.light}
+COMPOSITION: ${phot.composition}
+COLOR: ${phot.color}
+EXCLUDES: ${phot.excludes}`;
         }
 
         function generatePrompt() {
@@ -497,90 +518,51 @@
             const mood = document.getElementById('mood').value;
             const style = document.getElementById('style').value;
 
-            if (!photId || !subject || !genId) {
-                alert('Please fill in: Photographer, Scene, and Generator');
+            if (!photId || !subject) {
+                alert('Please fill in: Photographer and Scene description');
                 return;
             }
 
-            const prompt = buildPrompt(photId, subject, genId, mood, style);
+            const phot = photographers[photId];
+            let prompt = buildPrompt(phot, subject, genId, mood, style);
 
             document.getElementById('promptOutput').textContent = prompt;
-            document.getElementById('metaPhotographer').textContent = photographers[photId].name;
-            document.getElementById('metaGenerator').textContent = generators[genId].name;
+            document.getElementById('metaPhotographer').textContent = phot.name;
+            document.getElementById('metaEra').textContent = phot.era;
         }
 
-        function buildPrompt(photId, subject, genId, mood, style) {
-            const phot = photographers[photId];
-            const emotionalTone = mood || phot.emotional_palette.slice(0, 4).join(', ');
+        function buildPrompt(phot, subject, genId, mood, style) {
+            const additionalNotes = mood || style ? `\n[USER NOTES: ${[mood, style].filter(x => x).join(', ')}]` : '';
 
-            let prompt;
+            let prompt = `═══ PHOTOGRAPHER FINGERPRINT PROMPT ═══
+PHOTOGRAPHER: ${phot.name}
 
-            if (genId === 'midjourney') {
-                prompt = `${subject}, inspired by ${phot.name}.
-
-TECHNICAL:
-- Color: ${phot.technical.color_language}
-- Film: ${phot.technical.film_stock}
-- Grain: ${phot.technical.grain}
-- Camera: ${phot.technical.camera}
-- Lens: ${phot.technical.lens}
-- Exposure: ${phot.technical.exposure}
-- Tonality: ${phot.technical.tonality}
-
-COMPOSITION:
-- Lighting: ${phot.composition.lighting}
-- Perspective: ${phot.composition.perspective}
-- Depth: ${phot.composition.depth}
-- Negative space: ${phot.composition.negative_space}
-
-SIGNATURE STYLE:
-- ${phot.characteristics.join(', ')}
-
-EMOTIONAL TONE:
-${emotionalTone}
-
-${style}
-
---style raw --ar 16:9`;
-
-            } else if (['nano-banana-pro', 'nano-banana-2'].includes(genId)) {
-                prompt = `${phot.name} style photography: ${subject}.
-Camera: ${phot.technical.camera}, Lens: ${phot.technical.lens}, Film: ${phot.technical.film_stock}.
-${phot.technical.color_language}. ${phot.technical.grain}.
-Lighting: ${phot.composition.lighting}.
-Composition: ${phot.composition.perspective}, ${phot.composition.depth}.
-Characteristics: ${phot.characteristics.join(', ')}.
-Mood: ${emotionalTone}. ${style}`.trim();
-
-            } else {
-                prompt = `A photograph of ${subject}, inspired by ${phot.name}.
+═══ SUBJECT ═══
+${subject}
 
 ═══ TECHNICAL SPECIFICATIONS ═══
-Color Treatment: ${phot.technical.color_language}
-Camera: ${phot.technical.camera}
-Lens: ${phot.technical.lens}
-Film Stock: ${phot.technical.film_stock}
-Grain: ${phot.technical.grain}
-Exposure: ${phot.technical.exposure}
-Tonality: ${phot.technical.tonality}
+Camera: ${phot.camera}
+Film/Sensor: ${phot.film}
+Grain: ${phot.grain}
+Exposure: ${phot.exposure}
+
+═══ LIGHT DOCTRINE ═══
+${phot.light}
 
 ═══ COMPOSITION ═══
-Lighting: ${phot.composition.lighting}
-Perspective: ${phot.composition.perspective}
-Depth of Field: ${phot.composition.depth}
-Negative Space: ${phot.composition.negative_space}
+${phot.composition}
 
-═══ SIGNATURE CHARACTERISTICS ═══
-${phot.characteristics.map((c, i) => `${i + 1}. ${c}`).join('\n')}
+═══ COLOR TREATMENT ═══
+${phot.color}
 
-═══ EMOTIONAL QUALITY ═══
-${emotionalTone}
+═══ CRITICAL EXCLUDES (DO NOT APPLY) ═══
+${phot.excludes}${additionalNotes}`;
 
-═══ ADDITIONAL NOTES ═══
-${style || 'Documentary integrity with artistic vision'}`;
+            if (genId === 'midjourney') {
+                prompt += '\n\n--style raw --ar 16:9';
             }
 
-            return prompt.trim();
+            return prompt;
         }
 
         function copyToClipboard() {
@@ -596,32 +578,6 @@ ${style || 'Documentary integrity with artistic vision'}`;
             });
         }
 
-        function generateExamples() {
-            const grid = document.getElementById('examplesGrid');
-            examples.forEach(ex => {
-                const btn = document.createElement('button');
-                btn.className = 'example-btn';
-                btn.innerHTML = `
-                    <div class="example-btn-title">${ex.title}</div>
-                    <div class="example-btn-desc">${photographers[ex.photographer].name} + ${generators[ex.generator].name}</div>
-                `;
-                btn.onclick = () => loadExample(ex);
-                grid.appendChild(btn);
-            });
-        }
-
-        function loadExample(ex) {
-            document.getElementById('photographer').value = ex.photographer;
-            document.getElementById('subject').value = ex.subject;
-            document.getElementById('mood').value = ex.mood;
-            document.getElementById('style').value = ex.style;
-            document.getElementById('generator').value = ex.generator;
-            updateFingerprint();
-            generatePrompt();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Init on load
         window.addEventListener('load', init);
     </script>
 </body>
